@@ -2,8 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using static BlackJackManager;
-using Unity.VisualScripting;
 
 public class BlackJackManager : MonoBehaviour
 {
@@ -416,7 +414,7 @@ public class BlackJackManager : MonoBehaviour
     }
     private int CalculateResult()
     {
-        return (_PracticeSet.MySelectedCard == NOTSELCETEDNUMBER || _PracticeSet.YourSelectedCard == NOTSELCETEDNUMBER) ? 0 : (_cardslist.MyCardsList[_PracticeSet.MySelectedCard].Number + _cardslist.YourCardsList[_PracticeSet.YourSelectedCard].Number + _PracticeSet.FieldCardsPracticeList[nowTrial] > 21) ? 0 : _cardslist.MyCardsList[_PracticeSet.MySelectedCard].Number + _cardslist.YourCardsList[_PracticeSet.YourSelectedCard].Number + _PracticeSet.FieldCardsPracticeList[nowTrial];
+        return (_PracticeSet.MySelectedCard == NOTSELCETEDNUMBER || _PracticeSet.YourSelectedCard == NOTSELCETEDNUMBER) ? 0 : (_cardslist.MyCardsList[_PracticeSet.MySelectedCard].Number + _cardslist.YourCardsList[_PracticeSet.YourSelectedCard].Number + _PracticeSet.FieldCardsPracticeList[nowTrial][0] > 21) ? 0 : _cardslist.MyCardsList[_PracticeSet.MySelectedCard].Number + _cardslist.YourCardsList[_PracticeSet.YourSelectedCard].Number + _PracticeSet.FieldCardsPracticeList[nowTrial][0];
     }
     public void MakeReadyHost()
     {
@@ -479,7 +477,7 @@ public class BlackJackManager : MonoBehaviour
         {
             for (int j = 0; j < _cardslist.YourCardsList.Count; j++)
             {
-                int _score = (_cardslist.MyCardsList[i].Number + _cardslist.YourCardsList[j].Number + _PracticeSet.FieldCardsPracticeList[nowTrial] > 21) ? 0 : _cardslist.MyCardsList[i].Number + _cardslist.YourCardsList[j].Number + _PracticeSet.FieldCardsPracticeList[nowTrial];
+                int _score = (_cardslist.MyCardsList[i].Number + _cardslist.YourCardsList[j].Number + _PracticeSet.FieldCardsPracticeList[nowTrial][0] > 21) ? 0 : _cardslist.MyCardsList[i].Number + _cardslist.YourCardsList[j].Number + _PracticeSet.FieldCardsPracticeList[nowTrial][0];
                 if (MaxScore < _score) MaxScore = _score;
             }
         }
@@ -492,7 +490,7 @@ public class BlackJackManager : MonoBehaviour
         {
             for (int j = 0; j < _cardslist.YourCardsList.Count; j++)
             {
-                int _score = (_cardslist.MyCardsList[i].Number + _cardslist.YourCardsList[j].Number + _PracticeSet.FieldCardsPracticeList[nowTrial] > 21) ? 0 : _cardslist.MyCardsList[i].Number + _cardslist.YourCardsList[j].Number + _PracticeSet.FieldCardsPracticeList[nowTrial];
+                int _score = (_cardslist.MyCardsList[i].Number + _cardslist.YourCardsList[j].Number + _PracticeSet.FieldCardsPracticeList[nowTrial][0] > 21) ? 0 : _cardslist.MyCardsList[i].Number + _cardslist.YourCardsList[j].Number + _PracticeSet.FieldCardsPracticeList[nowTrial][0];
                 if (_cardslist.MyCardsList[i].suit.GetColor() == _cardslist.YourCardsList[j].suit.GetColor())
                 {
                     if (_cardslist.MyCardsList[i].suit == _cardslist.YourCardsList[j].suit)

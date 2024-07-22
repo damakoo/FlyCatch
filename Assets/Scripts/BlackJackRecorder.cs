@@ -19,7 +19,7 @@ public class BlackJackRecorder : MonoBehaviour
     public List<int> ScoreList { get; set; } = new List<int>();
     private List<List<int>> MyCardsPracticeList => _PracticeSet.MyCardsPracticeList;
     private List<List<int>> YourCardsPracticeList => _PracticeSet.YourCardsPracticeList;
-    private List<int> FieldCardsPracticeList => _PracticeSet.FieldCardsPracticeList;
+    private List<List<int>> FieldCardsPracticeList => _PracticeSet.FieldCardsPracticeList;
     private int TrialAll => _PracticeSet.TrialAll;
     private List<float> MySelectedTime => _PracticeSet.MySelectedTime;
     private List<float> YourSelectedTime => _PracticeSet.YourSelectedTime;
@@ -41,13 +41,14 @@ public class BlackJackRecorder : MonoBehaviour
     string WriteContent()
     {
         string Content = "";
-        Content += "FieldNumber";
+        for (int i = 0; i < FieldCardsPracticeList[0].Count; i++) Content += ",FieldCards" + (i + 1).ToString();
         for (int i = 0; i < MyCardsPracticeList[0].Count; i++) Content += ",MyCards" + (i + 1).ToString();
         for (int i = 0; i < YourCardsPracticeList[0].Count; i++) Content += ",YourCards" + (i + 1).ToString();
         Content += ",MyNumber,YourNumber,MySelectedTime,YourSelectedTime,MySelectedQuestionnaire,YourSelectedQuestionnaire,Score,Trial\n";
         for (int i = 0; i < TrialAll; i++)
         {
-            Content += FieldCardsPracticeList[i].ToString();
+            Content = "";
+            for (int j = 0; j < FieldCardsPracticeList[i].Count; j++) Content += "," + FieldCardsPracticeList[i][j].ToString();
             for (int j = 0; j < MyCardsPracticeList[i].Count; j++) Content += "," + MyCardsPracticeList[i][j].ToString();
             for (int j = 0; j < YourCardsPracticeList[i].Count; j++) Content += "," + YourCardsPracticeList[i][j].ToString();
             Content += "," + MyNumberList[i].ToString() + "," + YourNumberList[i].ToString() + "," + MySelectedTime[i].ToString() + "," + YourSelectedTime[i].ToString() + "," + MySelectedBetList[i].ToString() + "," + YourSelectedBetList[i].ToString() + "," + ScoreList[i].ToString() + "," + Trial.ToString() + "\n";

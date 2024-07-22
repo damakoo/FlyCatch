@@ -117,7 +117,7 @@ public class PracticeSet: MonoBehaviourPunCallbacks
     }
     public List<List<int>> MyCardsPracticeList { get; set; } = new List<List<int>>();
     public List<List<int>> YourCardsPracticeList { get; set; } = new List<List<int>>();
-    public List<int> FieldCardsPracticeList /*{ get; set; }*/ = new List<int>();
+    public List<List<int>> FieldCardsPracticeList /*{ get; set; }*/ = new List<List<int>>();
     public void SetMyCardsPracticeList(List<List<int>> _MyCardsPracticeList)
     {
         List<List<int>> temp = _MyCardsPracticeList;
@@ -142,17 +142,17 @@ public class PracticeSet: MonoBehaviourPunCallbacks
         // ここでカードデータを再構築
         YourCardsPracticeList = DeserializeCardList(serializeCards);
     }
-    public void SetFieldCardsList(List<int> _FieldCardsPracticeList)
+    public void SetFieldCardsList(List<List<int>> _FieldCardsPracticeList)
     {
-        List<int> temp = FieldCardsPracticeList;
+        List<List<int>> temp = FieldCardsPracticeList;
         FieldCardsPracticeList = temp;
-        _PhotonView.RPC("UpdateFieldCardsPracticeListOnAllClients", RpcTarget.Others, SerializeFieldCard(_FieldCardsPracticeList));
+        _PhotonView.RPC("UpdateFieldCardsPracticeListOnAllClients", RpcTarget.Others, SerializeCardList(_FieldCardsPracticeList));
     }
     [PunRPC]
     void UpdateFieldCardsPracticeListOnAllClients(string serializeCards)
     {
         // ここでカードデータを再構築
-        FieldCardsPracticeList = DeserializeFieldCard(serializeCards);
+        FieldCardsPracticeList = DeserializeCardList(serializeCards);
     }
 
     private string SerializeCardList(List<List<int>> cards)
@@ -298,7 +298,7 @@ public class PracticeSet: MonoBehaviourPunCallbacks
 
 
     public int NumberofSet { get; set; } = 5;
-    int FieldCards = 0;
+    List<int> FieldCards = new List<int>();
 
     List<int> MyCards;
     List<int> YourCards;
@@ -335,7 +335,7 @@ public class PracticeSet: MonoBehaviourPunCallbacks
     }
     public void ReUpdateParameter()
     {
-        FieldCardsPracticeList = new List<int>();
+        FieldCardsPracticeList = new List<List<int>>();
         MyCardsPracticeList = new List<List<int>>();
         YourCardsPracticeList = new List<List<int>>();
         FieldCardsSuitPracticeList = new List<int>();
@@ -401,7 +401,7 @@ public class PracticeSet: MonoBehaviourPunCallbacks
         YourCards = CardPattern.YourCardPattern[_order];
         MyCardsSuit = CardPattern.MyCardPatternSuit[_order];
         YourCardsSuit = CardPattern.YourCardPatternSuit[_order];
-        FieldCards = CardPattern.FieldCardPattern[_order];
+        //FieldCards = CardPattern.FieldCardPattern[_order];
         FieldCardsSuit = CardPattern.FieldCardPatternSuit[_order];
     }
     void DecidingCards(int _j)
@@ -419,9 +419,9 @@ public class PracticeSet: MonoBehaviourPunCallbacks
         YourCards = new List<int>();
         MyCardsSuit = new List<int>();
         YourCardsSuit = new List<int>();
-        FieldCards = UnityEngine.Random.Range(1, 14);
-        FieldCardsSuit = UnityEngine.Random.Range(0, 4);
-        int _targetSum = 21 - FieldCards;
+        //FieldCards = UnityEngine.Random.Range(1, 14);
+        //FieldCardsSuit = UnityEngine.Random.Range(0, 4);
+        int _targetSum = 10;
         if (_j > 0)
         {
             for (int i = 0; i < _j; i++)
@@ -462,7 +462,7 @@ public class PracticeSet: MonoBehaviourPunCallbacks
         YourCards = new List<int>();
         MyCardsSuit = new List<int>();
         YourCardsSuit = new List<int>();
-        FieldCards = UnityEngine.Random.Range(1, 14);
+       // FieldCards = UnityEngine.Random.Range(1, 14);
         //FieldCards = 6;
         FieldCardsSuit = UnityEngine.Random.Range(0, 4);
         for (int i = 0; i < 5; i++)
@@ -493,7 +493,7 @@ public class PracticeSet: MonoBehaviourPunCallbacks
         }
 
         // FieldCards と FieldCardsSuit の組み合わせを追加
-        combinedList.Add((FieldCards, FieldCardsSuit));
+        //combinedList.Add((FieldCards, FieldCardsSuit));
 
         // 重複があるかチェック
         return combinedList.GroupBy(x => x).Any(g => g.Count() > 1);
@@ -504,7 +504,7 @@ public class PracticeSet: MonoBehaviourPunCallbacks
         for (int k = 1; k < 14; k++)
         {
             int number = 0;
-            if (FieldCards == k) number++;
+            //if (FieldCards == k) number++;
             foreach (var i in MyCards) if (i == k) number++;
             foreach (var i in YourCards) if (i == k) number++;
             if (number > 4) Result = true;

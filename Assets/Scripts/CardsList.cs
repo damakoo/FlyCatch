@@ -115,7 +115,7 @@ public class CardsList : MonoBehaviour
             MyCardsList[i].suit = (Suit)Enum.ToObject(typeof(Suit), _PracticeSet.MyCardsSuitPracticeList[Trial][i]);
             YourCardsList[i].suit = (Suit)Enum.ToObject(typeof(Suit), _PracticeSet.YourCardsSuitPracticeList[Trial][i]);
         }
-        MyFieldCard.Number = _PracticeSet.FieldCardsPracticeList[Trial];
+        MyFieldCard.Number = _PracticeSet.FieldCardsPracticeList[Trial][0];
         MyFieldCard.suit = (Suit)Enum.ToObject(typeof(Suit), _PracticeSet.FieldCardsSuitPracticeList[Trial]);
         //YourFieldCard.Number = _PracticeSet.FieldCardsPracticeList[Trial];
     }
