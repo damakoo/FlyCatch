@@ -200,7 +200,7 @@ public class PracticeSet: MonoBehaviourPunCallbacks
     void UpdateFieldCardsPracticeListOnAllClients(string serializeCards)
     {
         // ここでカードデータを再構築
-        FieldCardsPracticeList = DeserializeCardList(serializeCards);
+        FieldCardsPracticeList = DeserializeFieldCardList(serializeCards);
     }
 
     private string SerializeCardList(List<List<int>> cards)
@@ -232,7 +232,29 @@ public class PracticeSet: MonoBehaviourPunCallbacks
             List<int> Element = new List<int>();
             for(int j = 0; j < NumberofCards; j++)
             {
-                Element.Add(numbers[i*NumberofCards + j]);
+                Element.Add(numbers[i* NumberofCards + j]);
+            }
+            cardList.Add(Element);
+        }
+        return cardList;
+    }
+    private List<List<int>> DeserializeFieldCardList(string json)
+    {
+        Regex regex = new Regex(@"\d+");
+
+        List<int> numbers = new List<int>();
+        foreach (Match match in regex.Matches(json))
+        {
+            numbers.Add(int.Parse(match.Value));
+        }
+        List<List<int>> cardList = new List<List<int>>();
+        // JSON 文字列を int[] の配列に変換
+        for (int i = 0; i < NumberofSet; i++)
+        {
+            List<int> Element = new List<int>();
+            for (int j = 0; j < 12; j++)
+            {
+                Element.Add(numbers[i * 12 + j]);
             }
             cardList.Add(Element);
         }
@@ -342,7 +364,7 @@ public class PracticeSet: MonoBehaviourPunCallbacks
     }
 
     public int TrialAll;
-    public int NumberofCards = 5;
+    public int NumberofCards { get; set; } = 3;
 
 
     public int NumberofSet { get; set; } = 5;

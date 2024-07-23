@@ -45,11 +45,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 028f8569a16ca4d3cb86065c27401682, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FieldCardsPracticeList: 
+  HostPlayerPos: {x: 0, y: 0, z: 0}
+  ClientPlayerPos: {x: 0, y: 0, z: 0}
+  HostPlayerRunning: 0
+  ClientPlayerRunning: 0
   FieldCardsSuitPracticeList: 
   BlackJackState: 0
   TrialAll: 5
-  NumberofCards: 5
 --- !u!114 &2385453104751281697
 MonoBehaviour:
   m_ObjectHideFlags: 0
