@@ -66,6 +66,10 @@ MonoBehaviour:
   - UpdateClientPressedOnAllClients
   - UpdateHostPressedOnAllClients
   - RPCGameStartUi
+  - UpdateSetHostPlayerPos
+  - UpdateSetClientPlayerPos
+  - UpdateSetClientPlayerRunning
+  - UpdateSetHostPlayerRunning
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

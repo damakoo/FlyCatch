@@ -32,6 +32,7 @@ public class CardsList : MonoBehaviour
     }
     public void InitializeCards()
     {
+        /*
         for(int i = 0; i < _PracticeSet.NumberofCards; i++)
         {
             if(_blackJackManager._hostorclient == BlackJackManager.HostorClient.Host)
@@ -73,10 +74,10 @@ public class CardsList : MonoBehaviour
             //CardState_opponent yourcardState_opponent = yourcard_opponent.AddComponent<CardState_opponent>().Initialize(yourcard_opponent, mycardState);
             //YourCardsList_opponent.Add(yourcardState_opponent);
 
-        }
-        GameObject myfieldcard = Instantiate(CardPrefab, MyFieldCardtransform.position, Quaternion.identity, CardsListParent.transform);
-        myfieldcard.name = "MyFieldCard";
-        MyFieldCard = myfieldcard.AddComponent<CardState>().Initialize(myfieldcard, false, 0);
+        }*/
+        //GameObject myfieldcard = Instantiate(CardPrefab, MyFieldCardtransform.position, Quaternion.identity, CardsListParent.transform);
+        //myfieldcard.name = "MyFieldCard";
+        //MyFieldCard = myfieldcard.AddComponent<CardState>().Initialize(myfieldcard, false, 0);
         _PracticeSet.MySelectedTime = new List<float>();
         _PracticeSet.YourSelectedTime = new List<float>();
         for (int i = 0; i < _PracticeSet.NumberofSet; i++)

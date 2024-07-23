@@ -73,25 +73,25 @@ public class PracticeSet: MonoBehaviourPunCallbacks
     }
     public void SetMySelectedTime(float time, int trial)
     {
-        MySelectedTime[trial] = time;
+        MySelectedTime[trial] += time;
         _PhotonView.RPC("UpdateMySelectedTimeOnAllClients", RpcTarget.Others, time, trial);
     }
     [PunRPC]
     void UpdateMySelectedTimeOnAllClients(float time, int trial)
     {
         // ここでカードデータを再構築
-        MySelectedTime[trial] = time;
+        MySelectedTime[trial] += time;
     }
     public void SetYourSelectedTime(float time, int trial)
     {
-        YourSelectedTime[trial] = time;
+        YourSelectedTime[trial] += time;
         _PhotonView.RPC("UpdateYourSelectedTimeOnAllClients", RpcTarget.Others, time, trial);
     }
     [PunRPC]
     void UpdateYourSelectedTimeOnAllClients(float time, int trial)
     {
         // ここでカードデータを再構築
-        YourSelectedTime[trial] = time;
+        YourSelectedTime[trial] += time;
     }
     public void SetMySelectedCard(int card)
     {
@@ -114,6 +114,54 @@ public class PracticeSet: MonoBehaviourPunCallbacks
     {
         // ここでカードデータを再構築
         YourSelectedCard = _Number;
+    }
+    public Vector3 HostPlayerPos;
+    public Vector3 ClientPlayerPos;
+    public bool HostPlayerRunning;
+    public bool ClientPlayerRunning;
+    public void SetHostPlayerRunning(bool _HostPlayerRunning)
+    {
+        HostPlayerRunning = _HostPlayerRunning;
+        _PhotonView.RPC("UpdateSetHostPlayerRunning", RpcTarget.Others, _HostPlayerRunning);
+    }
+    [PunRPC]
+    void UpdateSetHostPlayerRunning(bool _HostPlayerRunning)
+    {
+        // ここでカードデータを再構築
+        HostPlayerRunning = _HostPlayerRunning;
+    }
+    public void SetClientPlayerRunning(bool _ClientPlayerRunning)
+    {
+        ClientPlayerRunning = _ClientPlayerRunning;
+        _PhotonView.RPC("UpdateSetHostPlayerRunning", RpcTarget.Others, _ClientPlayerRunning);
+    }
+    [PunRPC]
+    void UpdateSetClientPlayerRunning(bool _ClientPlayerRunning)
+    {
+        // ここでカードデータを再構築
+        ClientPlayerRunning = _ClientPlayerRunning;
+    }
+    public void SetHostPlayerPos(Vector3 _hostplayerpos)
+    {
+        HostPlayerPos = _hostplayerpos;
+        _PhotonView.RPC("UpdateSetHostPlayerPos", RpcTarget.Others, _hostplayerpos.x, _hostplayerpos.y, _hostplayerpos.z);
+    }
+    [PunRPC]
+    void UpdateSetHostPlayerPos(int _hostplayerpos_x, int _hostplayerpos_y, int _hostplayerpos_z)
+    {
+        // ここでカードデータを再構築
+        HostPlayerPos = new Vector3(_hostplayerpos_x,_hostplayerpos_y,_hostplayerpos_z);
+    }
+    public void SetClientPlayerPos(Vector3 _clientplayerpos)
+    {
+        ClientPlayerPos = _clientplayerpos;
+        _PhotonView.RPC("UpdateSetClientPlayerPos", RpcTarget.Others, _clientplayerpos.x, _clientplayerpos.y, _clientplayerpos.z);
+    }
+    [PunRPC]
+    void UpdateSetClientPlayerPos(int _hostplayerpos_x, int _hostplayerpos_y, int _hostplayerpos_z)
+    {
+        // ここでカードデータを再構築
+        ClientPlayerPos = new Vector3(_hostplayerpos_x, _hostplayerpos_y, _hostplayerpos_z);
     }
     public List<List<int>> MyCardsPracticeList { get; set; } = new List<List<int>>();
     public List<List<int>> YourCardsPracticeList { get; set; } = new List<List<int>>();
@@ -321,16 +369,10 @@ public class PracticeSet: MonoBehaviourPunCallbacks
             FieldCardsPracticeList.Add(FieldCards);
             MyCardsPracticeList.Add(MyCards);
             YourCardsPracticeList.Add(YourCards);
-            FieldCardsSuitPracticeList.Add(FieldCardsSuit);
-            MyCardsSuitPracticeList.Add(MyCardsSuit);
-            YourCardsSuitPracticeList.Add(YourCardsSuit);
         }
         SetMyCardsPracticeList(MyCardsPracticeList);
         SetYourCardsPracticeList(YourCardsPracticeList);
         SetFieldCardsList(FieldCardsPracticeList);
-        SetMyCardsSuitPracticeList(MyCardsSuitPracticeList);
-        SetYourCardsSuitPracticeList(YourCardsSuitPracticeList);
-        SetFieldCardsSuitList(FieldCardsSuitPracticeList);
         InitializeCard();
     }
     public void ReUpdateParameter()
@@ -338,9 +380,6 @@ public class PracticeSet: MonoBehaviourPunCallbacks
         FieldCardsPracticeList = new List<List<int>>();
         MyCardsPracticeList = new List<List<int>>();
         YourCardsPracticeList = new List<List<int>>();
-        FieldCardsSuitPracticeList = new List<int>();
-        MyCardsSuitPracticeList = new List<List<int>>();
-        YourCardsSuitPracticeList = new List<List<int>>();
 
         List<int> _order = GenerateRandomList(1, CardPattern.FieldCardPattern.Count);
         for (int i = 0; i < NumberofSet; i++)
@@ -351,16 +390,10 @@ public class PracticeSet: MonoBehaviourPunCallbacks
             FieldCardsPracticeList.Add(FieldCards);
             MyCardsPracticeList.Add(MyCards);
             YourCardsPracticeList.Add(YourCards);
-            FieldCardsSuitPracticeList.Add(FieldCardsSuit);
-            MyCardsSuitPracticeList.Add(MyCardsSuit);
-            YourCardsSuitPracticeList.Add(YourCardsSuit);
         }
         SetMyCardsPracticeList(MyCardsPracticeList);
         SetYourCardsPracticeList(YourCardsPracticeList);
         SetFieldCardsList(FieldCardsPracticeList);
-        SetMyCardsSuitPracticeList(MyCardsSuitPracticeList);
-        SetYourCardsSuitPracticeList(YourCardsSuitPracticeList);
-        SetFieldCardsSuitList(FieldCardsSuitPracticeList);
         ReInitializeCard();
     }
     private int RandomValue()
@@ -397,12 +430,16 @@ public class PracticeSet: MonoBehaviourPunCallbacks
     }
     void DecideDecidedCards(int _order)
     {
+        MyCards = new List<int>() { -22, 0, 16 };
+        YourCards = new List<int>() { 22, 0, 16 };
+        FieldCards = new List<int>() { 0, 0, 0, 0, 100, 100, 0, 0, 100, 0, 0, 16 };
+        /*
         MyCards = CardPattern.MyCardPattern[_order];
         YourCards = CardPattern.YourCardPattern[_order];
         MyCardsSuit = CardPattern.MyCardPatternSuit[_order];
         YourCardsSuit = CardPattern.YourCardPatternSuit[_order];
         //FieldCards = CardPattern.FieldCardPattern[_order];
-        FieldCardsSuit = CardPattern.FieldCardPatternSuit[_order];
+        FieldCardsSuit = CardPattern.FieldCardPatternSuit[_order];*/
     }
     void DecidingCards(int _j)
     {
