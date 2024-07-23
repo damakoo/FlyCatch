@@ -141,10 +141,10 @@ public class PracticeSet: MonoBehaviourPunCallbacks
         // ここでカードデータを再構築
         ClientPlayerRunning = _ClientPlayerRunning;
     }
-    public void SetHostPlayerPos(Vector3 _hostplayerpos)
+    public void SetHostPlayerPos(float _hostplayerpos_x, float _hostplayerpos_y, float _hostplayerpos_z)
     {
-        HostPlayerPos = _hostplayerpos;
-        _PhotonView.RPC("UpdateSetHostPlayerPos", RpcTarget.Others, _hostplayerpos.x, _hostplayerpos.y, _hostplayerpos.z);
+        HostPlayerPos = new Vector3(_hostplayerpos_x, _hostplayerpos_y, _hostplayerpos_z);
+        _PhotonView.RPC("UpdateSetHostPlayerPos", RpcTarget.Others, _hostplayerpos_x, _hostplayerpos_y, _hostplayerpos_z);
     }
     [PunRPC]
     void UpdateSetHostPlayerPos(float _hostplayerpos_x, float _hostplayerpos_y, float _hostplayerpos_z)
@@ -152,16 +152,16 @@ public class PracticeSet: MonoBehaviourPunCallbacks
         // ここでカードデータを再構築
         HostPlayerPos = new Vector3(_hostplayerpos_x,_hostplayerpos_y,_hostplayerpos_z);
     }
-    public void SetClientPlayerPos(Vector3 _clientplayerpos)
+    public void SetClientPlayerPos(float _clientplayerpos_x, float _clientplayerpos_y, float _clientplayerpos_z)
     {
-        ClientPlayerPos = _clientplayerpos;
-        _PhotonView.RPC("UpdateSetClientPlayerPos", RpcTarget.Others, _clientplayerpos.x, _clientplayerpos.y, _clientplayerpos.z);
+        ClientPlayerPos = new Vector3(_clientplayerpos_x, _clientplayerpos_y, _clientplayerpos_z);
+        _PhotonView.RPC("UpdateSetClientPlayerPos", RpcTarget.Others, _clientplayerpos_x, _clientplayerpos_y, _clientplayerpos_z);
     }
     [PunRPC]
-    void UpdateSetClientPlayerPos(float _hostplayerpos_x, float _hostplayerpos_y, float _hostplayerpos_z)
+    void UpdateSetClientPlayerPos(float _clientplayerpos_x, float _clientplayerpos_y, float _clientplayerpos_z)
     {
         // ここでカードデータを再構築
-        ClientPlayerPos = new Vector3(_hostplayerpos_x, _hostplayerpos_y, _hostplayerpos_z);
+        ClientPlayerPos = new Vector3(_clientplayerpos_x, _clientplayerpos_y, _clientplayerpos_z);
     }
     public List<List<float>> MyCardsPracticeList { get; set; } = new List<List<float>>();
     public List<List<float>> YourCardsPracticeList { get; set; } = new List<List<float>>();
@@ -218,7 +218,7 @@ public class PracticeSet: MonoBehaviourPunCallbacks
 
     private List<List<float>> DeserializeCardList(string json)
     {
-        Regex regex = new Regex(@"\d+");
+        Regex regex = new Regex(@"-?\d+(\.\d+)?");
 
         List<float> numbers = new List<float>();
         foreach (Match match in regex.Matches(json))
@@ -240,7 +240,7 @@ public class PracticeSet: MonoBehaviourPunCallbacks
     }
     private List<List<float>> DeserializeFieldCardList(string json)
     {
-        Regex regex = new Regex(@"\d+");
+        Regex regex = new Regex(@"-?\d+(\.\d+)?");
 
         List<float> numbers = new List<float>();
         foreach (Match match in regex.Matches(json))

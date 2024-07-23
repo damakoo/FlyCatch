@@ -71,6 +71,8 @@ public class BlackJackManager : MonoBehaviour
         TimeLimitObj_str.text = "";
         HostPlayerAnimator = HostPlayer.GetComponent<Animator>();
         ClientPlayerAnimator = ClientPlayer.GetComponent<Animator>();
+        HostPlayerAnimator.applyRootMotion = false;
+        ClientPlayerAnimator.applyRootMotion = false;
     }
 
     // Update is called once per frame
@@ -227,7 +229,8 @@ public class BlackJackManager : MonoBehaviour
             _PracticeSet.SetMySelectedTime(nowTime, nowTrial);
             if (distance_host < AmountOfMove)
             {
-                _PracticeSet.SetHostPlayerPos(HostPlayer.transform.position + (fallpoint - HostPlayer.transform.position) / distance_host * AmountOfMove);
+                Vector3 destination = HostPlayer.transform.position + (fallpoint - HostPlayer.transform.position) / distance_host * AmountOfMove;
+                _PracticeSet.SetHostPlayerPos(destination.x, destination.y, destination.z);
             }
         }
 
@@ -236,7 +239,8 @@ public class BlackJackManager : MonoBehaviour
             _PracticeSet.SetYourSelectedTime(nowTime, nowTrial);
             if (distance_client < AmountOfMove)
             {
-                _PracticeSet.SetClientPlayerPos(ClientPlayer.transform.position + (fallpoint - ClientPlayer.transform.position) / distance_client * AmountOfMove);
+                Vector3 destination = ClientPlayer.transform.position + (fallpoint - ClientPlayer.transform.position) / distance_client * AmountOfMove;
+                _PracticeSet.SetClientPlayerPos(destination.x, destination.y, destination.z);
             }
         }
         HostPlayer.transform.position = _PracticeSet.HostPlayerPos;
@@ -378,8 +382,8 @@ public class BlackJackManager : MonoBehaviour
         Ball_rididbody.AddForce(new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][3], _PracticeSet.FieldCardsPracticeList[nowTrial][4], _PracticeSet.FieldCardsPracticeList[nowTrial][5]));
         Ball_rididbody.AddTorque(new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][6], _PracticeSet.FieldCardsPracticeList[nowTrial][7], _PracticeSet.FieldCardsPracticeList[nowTrial][8]));
         fallpoint = new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][9], _PracticeSet.FieldCardsPracticeList[nowTrial][10], _PracticeSet.FieldCardsPracticeList[nowTrial][11]);
-        _PracticeSet.SetHostPlayerPos(new Vector3(_PracticeSet.MyCardsPracticeList[nowTrial][0], _PracticeSet.MyCardsPracticeList[nowTrial][1], _PracticeSet.MyCardsPracticeList[nowTrial][2]));
-        _PracticeSet.SetClientPlayerPos(new Vector3(_PracticeSet.YourCardsPracticeList[nowTrial][0], _PracticeSet.YourCardsPracticeList[nowTrial][1], _PracticeSet.YourCardsPracticeList[nowTrial][2]));
+        _PracticeSet.SetHostPlayerPos(_PracticeSet.MyCardsPracticeList[nowTrial][0], _PracticeSet.MyCardsPracticeList[nowTrial][1], _PracticeSet.MyCardsPracticeList[nowTrial][2]);
+        _PracticeSet.SetClientPlayerPos(_PracticeSet.YourCardsPracticeList[nowTrial][0], _PracticeSet.YourCardsPracticeList[nowTrial][1], _PracticeSet.YourCardsPracticeList[nowTrial][2]);
         _PracticeSet.BlackJackState = PracticeSet.BlackJackStateList.SelectCards;
         TimeLimitObj.transform.position = TimeLimit_notBet.transform.position;
     }
