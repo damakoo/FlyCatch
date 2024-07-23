@@ -17,9 +17,9 @@ public class BlackJackRecorder : MonoBehaviour
     public List<int> MySelectedBetList { get; set; } = new List<int>();
     public List<int> YourSelectedBetList { get; set; } = new List<int>();
     public List<int> ScoreList { get; set; } = new List<int>();
-    private List<List<int>> MyCardsPracticeList => _PracticeSet.MyCardsPracticeList;
-    private List<List<int>> YourCardsPracticeList => _PracticeSet.YourCardsPracticeList;
-    private List<List<int>> FieldCardsPracticeList => _PracticeSet.FieldCardsPracticeList;
+    private List<List<float>> MyCardsPracticeList => _PracticeSet.MyCardsPracticeList;
+    private List<List<float>> YourCardsPracticeList => _PracticeSet.YourCardsPracticeList;
+    private List<List<float>> FieldCardsPracticeList => _PracticeSet.FieldCardsPracticeList;
     private int TrialAll => _PracticeSet.TrialAll;
     private List<float> MySelectedTime => _PracticeSet.MySelectedTime;
     private List<float> YourSelectedTime => _PracticeSet.YourSelectedTime;

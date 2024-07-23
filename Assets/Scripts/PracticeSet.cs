@@ -147,7 +147,7 @@ public class PracticeSet: MonoBehaviourPunCallbacks
         _PhotonView.RPC("UpdateSetHostPlayerPos", RpcTarget.Others, _hostplayerpos.x, _hostplayerpos.y, _hostplayerpos.z);
     }
     [PunRPC]
-    void UpdateSetHostPlayerPos(int _hostplayerpos_x, int _hostplayerpos_y, int _hostplayerpos_z)
+    void UpdateSetHostPlayerPos(float _hostplayerpos_x, float _hostplayerpos_y, float _hostplayerpos_z)
     {
         // ここでカードデータを再構築
         HostPlayerPos = new Vector3(_hostplayerpos_x,_hostplayerpos_y,_hostplayerpos_z);
@@ -158,17 +158,17 @@ public class PracticeSet: MonoBehaviourPunCallbacks
         _PhotonView.RPC("UpdateSetClientPlayerPos", RpcTarget.Others, _clientplayerpos.x, _clientplayerpos.y, _clientplayerpos.z);
     }
     [PunRPC]
-    void UpdateSetClientPlayerPos(int _hostplayerpos_x, int _hostplayerpos_y, int _hostplayerpos_z)
+    void UpdateSetClientPlayerPos(float _hostplayerpos_x, float _hostplayerpos_y, float _hostplayerpos_z)
     {
         // ここでカードデータを再構築
         ClientPlayerPos = new Vector3(_hostplayerpos_x, _hostplayerpos_y, _hostplayerpos_z);
     }
-    public List<List<int>> MyCardsPracticeList { get; set; } = new List<List<int>>();
-    public List<List<int>> YourCardsPracticeList { get; set; } = new List<List<int>>();
-    public List<List<int>> FieldCardsPracticeList /*{ get; set; }*/ = new List<List<int>>();
-    public void SetMyCardsPracticeList(List<List<int>> _MyCardsPracticeList)
+    public List<List<float>> MyCardsPracticeList { get; set; } = new List<List<float>>();
+    public List<List<float>> YourCardsPracticeList { get; set; } = new List<List<float>>();
+    public List<List<float>> FieldCardsPracticeList /*{ get; set; }*/ = new List<List<float>>();
+    public void SetMyCardsPracticeList(List<List<float>> _MyCardsPracticeList)
     {
-        List<List<int>> temp = _MyCardsPracticeList;
+        List<List<float>> temp = _MyCardsPracticeList;
         MyCardsPracticeList = temp;
         _PhotonView.RPC("UpdateMyCardsPracticeListOnAllClients", RpcTarget.Others, SerializeCardList(_MyCardsPracticeList));
     }
@@ -178,9 +178,9 @@ public class PracticeSet: MonoBehaviourPunCallbacks
         // ここでカードデータを再構築
         MyCardsPracticeList = DeserializeCardList(serializeCards);
     }
-    public void SetYourCardsPracticeList(List<List<int>> _YourCardsPracticeList)
+    public void SetYourCardsPracticeList(List<List<float>> _YourCardsPracticeList)
     {
-        List<List<int>> temp = _YourCardsPracticeList;
+        List<List<float>> temp = _YourCardsPracticeList;
         YourCardsPracticeList = temp;
         _PhotonView.RPC("UpdateYourCardsPracticeListOnAllClients", RpcTarget.Others, SerializeCardList(_YourCardsPracticeList));
     }
@@ -190,9 +190,9 @@ public class PracticeSet: MonoBehaviourPunCallbacks
         // ここでカードデータを再構築
         YourCardsPracticeList = DeserializeCardList(serializeCards);
     }
-    public void SetFieldCardsList(List<List<int>> _FieldCardsPracticeList)
+    public void SetFieldCardsList(List<List<float>> _FieldCardsPracticeList)
     {
-        List<List<int>> temp = FieldCardsPracticeList;
+        List<List<float>> temp = FieldCardsPracticeList;
         FieldCardsPracticeList = temp;
         _PhotonView.RPC("UpdateFieldCardsPracticeListOnAllClients", RpcTarget.Others, SerializeCardList(_FieldCardsPracticeList));
     }
@@ -203,7 +203,7 @@ public class PracticeSet: MonoBehaviourPunCallbacks
         FieldCardsPracticeList = DeserializeFieldCardList(serializeCards);
     }
 
-    private string SerializeCardList(List<List<int>> cards)
+    private string SerializeCardList(List<List<float>> cards)
     {
 
         string cards_json = "[";
@@ -216,20 +216,20 @@ public class PracticeSet: MonoBehaviourPunCallbacks
         return cards_json;
     }
 
-    private List<List<int>> DeserializeCardList(string json)
+    private List<List<float>> DeserializeCardList(string json)
     {
         Regex regex = new Regex(@"\d+");
 
-        List<int> numbers = new List<int>();
+        List<float> numbers = new List<float>();
         foreach (Match match in regex.Matches(json))
         {
-            numbers.Add(int.Parse(match.Value));
+            numbers.Add(float.Parse(match.Value));
         }
-        List<List<int>> cardList = new List<List<int>>();
+        List<List<float>> cardList = new List<List<float>>();
         // JSON 文字列を int[] の配列に変換
         for(int i = 0; i<NumberofSet; i++)
         {
-            List<int> Element = new List<int>();
+            List<float> Element = new List<float>();
             for(int j = 0; j < NumberofCards; j++)
             {
                 Element.Add(numbers[i* NumberofCards + j]);
@@ -238,20 +238,20 @@ public class PracticeSet: MonoBehaviourPunCallbacks
         }
         return cardList;
     }
-    private List<List<int>> DeserializeFieldCardList(string json)
+    private List<List<float>> DeserializeFieldCardList(string json)
     {
         Regex regex = new Regex(@"\d+");
 
-        List<int> numbers = new List<int>();
+        List<float> numbers = new List<float>();
         foreach (Match match in regex.Matches(json))
         {
-            numbers.Add(int.Parse(match.Value));
+            numbers.Add(float.Parse(match.Value));
         }
-        List<List<int>> cardList = new List<List<int>>();
+        List<List<float>> cardList = new List<List<float>>();
         // JSON 文字列を int[] の配列に変換
         for (int i = 0; i < NumberofSet; i++)
         {
-            List<int> Element = new List<int>();
+            List<float> Element = new List<float>();
             for (int j = 0; j < 12; j++)
             {
                 Element.Add(numbers[i * 12 + j]);
@@ -294,39 +294,39 @@ public class PracticeSet: MonoBehaviourPunCallbacks
     public List<int> FieldCardsSuitPracticeList = new List<int>();
     public void SetMyCardsSuitPracticeList(List<List<int>> _MyCardsSuitPracticeList)
     {
-        List<List<int>> temp = _MyCardsSuitPracticeList;
-        MyCardsSuitPracticeList = temp;
-        _PhotonView.RPC("UpdateMyCardsSuitPracticeListOnAllClients", RpcTarget.Others, SerializeCardList(_MyCardsSuitPracticeList));
+        //List<List<int>> temp = _MyCardsSuitPracticeList;
+        //MyCardsSuitPracticeList = temp;
+        //_PhotonView.RPC("UpdateMyCardsSuitPracticeListOnAllClients", RpcTarget.Others, SerializeCardList(_MyCardsSuitPracticeList));
     }
     [PunRPC]
     void UpdateMyCardsSuitPracticeListOnAllClients(string serializeCards)
     {
         // ここでカードデータを再構築
-        MyCardsSuitPracticeList = DeserializeCardList(serializeCards);
+        //MyCardsSuitPracticeList = DeserializeCardList(serializeCards);
     }
     public void SetYourCardsSuitPracticeList(List<List<int>> _YourCardsSuitPracticeList)
     {
-        List<List<int>> temp = _YourCardsSuitPracticeList;
-        YourCardsSuitPracticeList = temp;
-        _PhotonView.RPC("UpdateYourCardsSuitPracticeListOnAllClients", RpcTarget.Others, SerializeCardList(_YourCardsSuitPracticeList));
+        //List<List<int>> temp = _YourCardsSuitPracticeList;
+        //YourCardsSuitPracticeList = temp;
+        //_PhotonView.RPC("UpdateYourCardsSuitPracticeListOnAllClients", RpcTarget.Others, SerializeCardList(_YourCardsSuitPracticeList));
     }
     [PunRPC]
     void UpdateYourCardsSuitPracticeListOnAllClients(string serializeCards)
     {
         // ここでカードデータを再構築
-        YourCardsSuitPracticeList = DeserializeCardList(serializeCards);
+        //YourCardsSuitPracticeList = DeserializeCardList(serializeCards);
     }
     public void SetFieldCardsSuitList(List<int> _FieldCardsSuitPracticeList)
     {
-        List<int> temp = FieldCardsSuitPracticeList;
-        FieldCardsSuitPracticeList = temp;
-        _PhotonView.RPC("UpdateFieldCardsSuitPracticeListOnAllClients", RpcTarget.Others, SerializeFieldCard(_FieldCardsSuitPracticeList));
+        //List<int> temp = FieldCardsSuitPracticeList;
+        //FieldCardsSuitPracticeList = temp;
+        //_PhotonView.RPC("UpdateFieldCardsSuitPracticeListOnAllClients", RpcTarget.Others, SerializeFieldCard(_FieldCardsSuitPracticeList));
     }
     [PunRPC]
     void UpdateFieldCardsSuitPracticeListOnAllClients(string serializeCards)
     {
         // ここでカードデータを再構築
-        FieldCardsSuitPracticeList = DeserializeFieldCard(serializeCards);
+       // FieldCardsSuitPracticeList = DeserializeFieldCard(serializeCards);
     }
 
     public enum BlackJackStateList
@@ -368,10 +368,10 @@ public class PracticeSet: MonoBehaviourPunCallbacks
 
 
     public int NumberofSet { get; set; } = 5;
-    List<int> FieldCards = new List<int>();
+    List<float> FieldCards = new List<float>();
 
-    List<int> MyCards;
-    List<int> YourCards;
+    List<float> MyCards;
+    List<float> YourCards;
     private static List<int> MyCardsSuit;
     private static List<int> YourCardsSuit;
     private static int FieldCardsSuit = 0;
@@ -399,9 +399,9 @@ public class PracticeSet: MonoBehaviourPunCallbacks
     }
     public void ReUpdateParameter()
     {
-        FieldCardsPracticeList = new List<List<int>>();
-        MyCardsPracticeList = new List<List<int>>();
-        YourCardsPracticeList = new List<List<int>>();
+        FieldCardsPracticeList = new List<List<float>>();
+        MyCardsPracticeList = new List<List<float>>();
+        YourCardsPracticeList = new List<List<float>>();
 
         List<int> _order = GenerateRandomList(1, CardPattern.FieldCardPattern.Count);
         for (int i = 0; i < NumberofSet; i++)
@@ -452,9 +452,9 @@ public class PracticeSet: MonoBehaviourPunCallbacks
     }
     void DecideDecidedCards(int _order)
     {
-        MyCards = new List<int>() { -22, 0, 16 };
-        YourCards = new List<int>() { 22, 0, 16 };
-        FieldCards = new List<int>() { 0, 0, 0, 0, 100, 100, 0, 0, 100, 0, 0, 16 };
+        MyCards = new List<float>() { -22, 0, 16 };
+        YourCards = new List<float>() { 22, 0, 16 };
+        FieldCards = new List<float>() { 0, 0, 0, 0, 100, 100, 0, 0, 100, 0, 0, 16 };
         /*
         MyCards = CardPattern.MyCardPattern[_order];
         YourCards = CardPattern.YourCardPattern[_order];
@@ -474,10 +474,10 @@ public class PracticeSet: MonoBehaviourPunCallbacks
 
     void DecideCards(int _j)
     {
-        MyCards = new List<int>();
-        YourCards = new List<int>();
-        MyCardsSuit = new List<int>();
-        YourCardsSuit = new List<int>();
+        /*MyCards = new List<float>();
+        YourCards = new List<float>();
+        MyCardsSuit = new List<float>();
+        YourCardsSuit = new List<float>();
         //FieldCards = UnityEngine.Random.Range(1, 14);
         //FieldCardsSuit = UnityEngine.Random.Range(0, 4);
         int _targetSum = 10;
@@ -513,11 +513,11 @@ public class PracticeSet: MonoBehaviourPunCallbacks
                 YourCardsSuit.Add(UnityEngine.Random.Range(0, 4));
             }
         }
-        ShuffleCards();
+        ShuffleCards();*/
     }
     void DecideRandomCards()
     {
-        MyCards = new List<int>();
+        /*MyCards = new List<int>();
         YourCards = new List<int>();
         MyCardsSuit = new List<int>();
         YourCardsSuit = new List<int>();
@@ -533,11 +533,11 @@ public class PracticeSet: MonoBehaviourPunCallbacks
             MyCardsSuit.Add(UnityEngine.Random.Range(0, 4));
             YourCardsSuit.Add(UnityEngine.Random.Range(0, 4));
         }
-        ShuffleCards();
+        ShuffleCards();*/
     }
     private bool CheckDoubleCard()
     {
-        var combinedList = new List<(int, int)>();
+        /*var combinedList = new List<(int, int)>();
 
         // MyCards と MyCardsSuit の組み合わせを追加
         for (int i = 0; i < MyCards.Count; i++)
@@ -555,7 +555,8 @@ public class PracticeSet: MonoBehaviourPunCallbacks
         //combinedList.Add((FieldCards, FieldCardsSuit));
 
         // 重複があるかチェック
-        return combinedList.GroupBy(x => x).Any(g => g.Count() > 1);
+        return combinedList.GroupBy(x => x).Any(g => g.Count() > 1);*/
+        return true;
     }
     bool CheckmorethanfourCards()
     {
@@ -591,14 +592,14 @@ public class PracticeSet: MonoBehaviourPunCallbacks
         for (int i = 0; i < MyCards.Count; i++)
         {
             int randomIndex = UnityEngine.Random.Range(i, MyCards.Count);
-            int temp = MyCards[i];
+            float temp = MyCards[i];
             MyCards[i] = MyCards[randomIndex];
             MyCards[randomIndex] = temp;
         }
         for (int i = 0; i < YourCards.Count; i++)
         {
             int randomIndex = UnityEngine.Random.Range(i, YourCards.Count);
-            int temp = YourCards[i];
+            float temp = YourCards[i];
             YourCards[i] = YourCards[randomIndex];
             YourCards[randomIndex] = temp;
         }

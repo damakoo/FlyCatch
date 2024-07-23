@@ -230,7 +230,8 @@ public class BlackJackManager : MonoBehaviour
                 _PracticeSet.SetHostPlayerPos(HostPlayer.transform.position + (fallpoint - HostPlayer.transform.position) / distance_host * AmountOfMove);
             }
         }
-        else if (Input.GetKey(KeyCode.J))
+
+        if (Input.GetKey(KeyCode.J))
         {
             _PracticeSet.SetYourSelectedTime(nowTime, nowTrial);
             if (distance_client < AmountOfMove)
@@ -298,7 +299,7 @@ public class BlackJackManager : MonoBehaviour
     void StartingGame()
     {
         // �}�E�X�{�^�����N���b�N���ꂽ���m�F
-        if (Input.GetMouseButtonDown(0))
+        /*if (Input.GetMouseButtonDown(0))
         {
             Vector2 rayPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             RaycastHit2D hit = Physics2D.Raycast(rayPos, Vector2.zero);
@@ -318,6 +319,21 @@ public class BlackJackManager : MonoBehaviour
                 StartingUi.SetActive(false);
                 StartingUi_button.SetActive(false);
             }
+        }*/
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+
+                if (_hostorclient == HostorClient.Host)
+                {
+                    _PracticeSet.SetHostPressed(true);
+                }
+                else if (_hostorclient == HostorClient.Client)
+                {
+                    _PracticeSet.SetClientPressed(true);
+                }
+                WaitforStartUi.SetActive(true);
+                StartingUi.SetActive(false);
+                StartingUi_button.SetActive(false);
         }
     }
 
@@ -362,8 +378,8 @@ public class BlackJackManager : MonoBehaviour
         Ball_rididbody.AddForce(new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][3], _PracticeSet.FieldCardsPracticeList[nowTrial][4], _PracticeSet.FieldCardsPracticeList[nowTrial][5]));
         Ball_rididbody.AddTorque(new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][6], _PracticeSet.FieldCardsPracticeList[nowTrial][7], _PracticeSet.FieldCardsPracticeList[nowTrial][8]));
         fallpoint = new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][9], _PracticeSet.FieldCardsPracticeList[nowTrial][10], _PracticeSet.FieldCardsPracticeList[nowTrial][11]);
-        HostPlayer.transform.position = new Vector3(_PracticeSet.MyCardsPracticeList[nowTrial][0], _PracticeSet.MyCardsPracticeList[nowTrial][1], _PracticeSet.MyCardsPracticeList[nowTrial][2]);
-        ClientPlayer.transform.position = new Vector3(_PracticeSet.YourCardsPracticeList[nowTrial][0], _PracticeSet.YourCardsPracticeList[nowTrial][1], _PracticeSet.YourCardsPracticeList[nowTrial][2]);
+        _PracticeSet.SetHostPlayerPos(new Vector3(_PracticeSet.MyCardsPracticeList[nowTrial][0], _PracticeSet.MyCardsPracticeList[nowTrial][1], _PracticeSet.MyCardsPracticeList[nowTrial][2]));
+        _PracticeSet.SetClientPlayerPos(new Vector3(_PracticeSet.YourCardsPracticeList[nowTrial][0], _PracticeSet.YourCardsPracticeList[nowTrial][1], _PracticeSet.YourCardsPracticeList[nowTrial][2]));
         _PracticeSet.BlackJackState = PracticeSet.BlackJackStateList.SelectCards;
         TimeLimitObj.transform.position = TimeLimit_notBet.transform.position;
     }
@@ -431,7 +447,7 @@ public class BlackJackManager : MonoBehaviour
         //_cardslist.AllClose();
         _PracticeSet.BlackJackState = PracticeSet.BlackJackStateList.WaitForNextTrial;
         nowTrial = _nowTrial;
-        _cardslist.SetCards(_nowTrial);
+        //_cardslist.SetCards(_nowTrial);
         MyScoreUI.text = "";
         //YourScoreUI.text = "";
         //_PracticeSet.MySelectedCard = NOTSELCETEDNUMBER;
@@ -503,7 +519,7 @@ public class BlackJackManager : MonoBehaviour
     }
     private void RecordMaxScore()
     {
-        int MaxScore = 0;
+        /*int MaxScore = 0;
         for (int i = 0; i < _cardslist.MyCardsList.Count; i++)
         {
             for (int j = 0; j < _cardslist.YourCardsList.Count; j++)
@@ -512,11 +528,11 @@ public class BlackJackManager : MonoBehaviour
                 if (MaxScore < _score) MaxScore = _score;
             }
         }
-        MaxScoreList.Add(MaxScore);
+        MaxScoreList.Add(MaxScore);*/
     }
     private void RecordMaxSuitScore()
     {
-        int MaxScore = 0;
+       /* int MaxScore = 0;
         for (int i = 0; i < _cardslist.MyCardsList.Count; i++)
         {
             for (int j = 0; j < _cardslist.YourCardsList.Count; j++)
@@ -536,7 +552,7 @@ public class BlackJackManager : MonoBehaviour
                 if (MaxScore < _score) MaxScore = _score;
             }
         }
-        MaxScoreList.Add(MaxScore);
+        MaxScoreList.Add(MaxScore);*/
     }
     private int ReturnSum(List<int> _list)
     {

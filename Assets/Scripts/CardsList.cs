@@ -109,7 +109,7 @@ public class CardsList : MonoBehaviour
 
     public void SetCards(int Trial)
     {
-        for (int i = 0; i < _PracticeSet.NumberofCards; i++)
+        /*for (int i = 0; i < _PracticeSet.NumberofCards; i++)
         {
             MyCardsList[i].Number = _PracticeSet.MyCardsPracticeList[Trial][i];
             YourCardsList[i].Number = _PracticeSet.YourCardsPracticeList[Trial][i];
@@ -118,7 +118,7 @@ public class CardsList : MonoBehaviour
         }
         MyFieldCard.Number = _PracticeSet.FieldCardsPracticeList[Trial][0];
         MyFieldCard.suit = (Suit)Enum.ToObject(typeof(Suit), _PracticeSet.FieldCardsSuitPracticeList[Trial]);
-        //YourFieldCard.Number = _PracticeSet.FieldCardsPracticeList[Trial];
+        //YourFieldCard.Number = _PracticeSet.FieldCardsPracticeList[Trial];*/
     }
 
     public void AllOpen()
