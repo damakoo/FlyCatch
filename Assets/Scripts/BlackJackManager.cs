@@ -46,6 +46,7 @@ public class BlackJackManager : MonoBehaviour
     public PracticeSet _PracticeSet { get; set; }
     private List<int> MaxScoreList = new List<int>();
     public List<int> ScoreList { get; set; } = new List<int>();
+    public List<float> floatScoreList { get; set; } = new List<float>();
     private int NOTSELCETEDNUMBER = 101;
     Vector3 currentAngularVelocity;
     Vector3 currentVelocity;
@@ -66,6 +67,7 @@ public class BlackJackManager : MonoBehaviour
     int nowTrial = 0;
     float nowTime = 0;
     private int Score = 0;
+    private float floatScore = 0;
     public bool hasPracticeSet { get; set; } = false;
     // Start is called before the first frame update
     void Start()
@@ -162,9 +164,9 @@ public class BlackJackManager : MonoBehaviour
                     //if (Input.GetKeyDown(KeyCode.Space)) MoveToWaitForNextTrial();
                     nowTime += Time.deltaTime;
                     _PracticeSet.SetTimeLeft(ResultsTime - nowTime);
-                    Ball_rigidbody.velocity = Vector3.zero;
-                    Ball_rigidbody.angularVelocity = Vector3.zero;
-                    Ball.transform.position = new Vector3(0, 0, -10);
+                    //Ball_rigidbody.velocity = Vector3.zero;
+                    //Ball_rigidbody.angularVelocity = Vector3.zero;
+                    //Ball_rigidbody.MovePosition(new Vector3(0, 0, -10f));
                     if (nowTime > ResultsTime)
                     {
                         nowTime = 0;
@@ -250,7 +252,11 @@ public class BlackJackManager : MonoBehaviour
         distance_host = Vector3.Magnitude(fallpoint - HostPlayer.transform.position);
         distance_client = Vector3.Magnitude(fallpoint - ClientPlayer.transform.position);
         // �}�E�X�{�^�����N���b�N���ꂽ���m�F
-        if (Input.GetKey(KeyCode.F))
+        if(distance_host < AmountOfMove * 1.5f * 0.1f)
+        {
+            _PracticeSet.SetMySelectedTime(Time.deltaTime, nowTrial);
+        }
+        else if (Input.GetKey(KeyCode.F))
         {
             _PracticeSet.SetMySelectedTime(Time.deltaTime, nowTrial);
             if (distance_host > AmountOfMove * 0.1f)
@@ -260,7 +266,11 @@ public class BlackJackManager : MonoBehaviour
             }
         }
 
-        if (Input.GetKey(KeyCode.J))
+        if (distance_client < AmountOfMove * 1.5f * 0.1f)
+        {
+            _PracticeSet.SetYourSelectedTime(Time.deltaTime, nowTrial);
+        }
+        else if (Input.GetKey(KeyCode.J))
         {
             _PracticeSet.SetYourSelectedTime(Time.deltaTime, nowTrial);
             if (distance_client > AmountOfMove * 0.1f)
@@ -404,7 +414,7 @@ public class BlackJackManager : MonoBehaviour
     public void MoveToSelectCards()
     {
         //_cardslist.AllOpen();
-        Ball.transform.position = new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][0], _PracticeSet.FieldCardsPracticeList[nowTrial][1], _PracticeSet.FieldCardsPracticeList[nowTrial][2]);
+        Ball_rigidbody.MovePosition(new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][0], _PracticeSet.FieldCardsPracticeList[nowTrial][1], _PracticeSet.FieldCardsPracticeList[nowTrial][2]));
         Ball_rigidbody.velocity= new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][3], _PracticeSet.FieldCardsPracticeList[nowTrial][4], _PracticeSet.FieldCardsPracticeList[nowTrial][5]);
         Ball_rigidbody.angularVelocity= new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][6], _PracticeSet.FieldCardsPracticeList[nowTrial][7], _PracticeSet.FieldCardsPracticeList[nowTrial][8]);
         fallpoint = new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][9], _PracticeSet.FieldCardsPracticeList[nowTrial][10], _PracticeSet.FieldCardsPracticeList[nowTrial][11]);
@@ -433,15 +443,17 @@ public class BlackJackManager : MonoBehaviour
         {
             if (card.Number == _PracticeSet.MySelectedCard.Number) card.Clicked();
         }*/
-        Ball_rigidbody.velocity = Vector3.zero;
-        Ball_rigidbody.angularVelocity = Vector3.zero;
-        Ball.transform.position = Vector3.one;
-        Debug.Log(Ball.transform.position.x);
+        //Ball_rigidbody.velocity = Vector3.zero;
+        //Ball_rigidbody.angularVelocity = Vector3.zero;
+        //Ball.transform.position = Vector3.one;
+        //Debug.Log(Ball.transform.position.x);
         Score = CalculateResult();
+        floatScore = CalculatefloatScore();
         //_blackJackRecorder.RecordResult((_PracticeSet.MySelectedCard == NOTSELCETEDNUMBER) ? 0 : _cardslist.MyCardsList[_PracticeSet.MySelectedCard].Number, (_PracticeSet.YourSelectedCard == NOTSELCETEDNUMBER) ? 0 : _cardslist.YourCardsList[_PracticeSet.YourSelectedCard].Number, (useSuit) ? CalculateSuitScore() : Score, _PracticeSet.MySelectedBet, _PracticeSet.YourSelectedBet);
         _PracticeSet.BlackJackState = PracticeSet.BlackJackStateList.ShowResult;
-        MyScoreUI.text = (Score == 1?"Succeed!":"Failed!") + "\n Left Pressed:" + _PracticeSet.MySelectedTime[nowTrial].ToString("F1") + "s\n Right Pressed:" + _PracticeSet.YourSelectedTime[nowTrial].ToString("F1") + "s";
+        MyScoreUI.text = (Score == 1?"Succeed!":"Failed!") + "Score:" + floatScore.ToString() + "\n Left Pressed:" + _PracticeSet.MySelectedTime[nowTrial].ToString("F1") + "s\n Right Pressed:" + _PracticeSet.YourSelectedTime[nowTrial].ToString("F1") + "s";
         ScoreList.Add(Score);
+        floatScoreList.Add(floatScore);
         if (useSuit)
         {
             RecordMaxSuitScore();
@@ -496,6 +508,13 @@ public class BlackJackManager : MonoBehaviour
     private int CalculateResult()
     {
         return (distance_host < AmountOfMove * 1.5f * 0.1f || distance_client < AmountOfMove * 1.5f * 0.1f) ? 1 : 0;
+    }
+    private float CalculatefloatScore()
+    {
+        float _succeed = (distance_host < AmountOfMove * 1.5f * 0.1f || distance_client < AmountOfMove * 1.5f * 0.1f) ? 1 : 0;
+        float Mydistance = Vector3.Magnitude(new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][0], _PracticeSet.FieldCardsPracticeList[nowTrial][1], _PracticeSet.FieldCardsPracticeList[nowTrial][2]) - new Vector3(_PracticeSet.MyCardsPracticeList[nowTrial][0], _PracticeSet.MyCardsPracticeList[nowTrial][1], _PracticeSet.MyCardsPracticeList[nowTrial][2]));
+        float Yourdistance = Vector3.Magnitude(new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][0], _PracticeSet.FieldCardsPracticeList[nowTrial][1], _PracticeSet.FieldCardsPracticeList[nowTrial][2]) - new Vector3(_PracticeSet.YourCardsPracticeList[nowTrial][0], _PracticeSet.YourCardsPracticeList[nowTrial][1], _PracticeSet.YourCardsPracticeList[nowTrial][2]));
+        return _succeed * Mathf.Abs(_PracticeSet.MySelectedTime[nowTrial] - _PracticeSet.YourSelectedTime[nowTrial]) / (Mydistance - Yourdistance);
     }
     public void MakeReadyHost()
     {
@@ -617,6 +636,7 @@ public class BlackJackManager : MonoBehaviour
         FinishUI.text = "";
         //_cardslist.AllClose();
         ScoreList = new List<int>();
+        floatScoreList = new List<float>();
         nowTrial = 0;
         nowTime = 0;
         _blackJackRecorder.Initialize();

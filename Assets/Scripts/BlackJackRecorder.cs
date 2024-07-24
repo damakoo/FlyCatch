@@ -17,6 +17,7 @@ public class BlackJackRecorder : MonoBehaviour
     public List<int> MySelectedBetList { get; set; } = new List<int>();
     public List<int> YourSelectedBetList { get; set; } = new List<int>();
     public List<int> ScoreList => _BlackJackManager.ScoreList;
+    public List<float> floatScoreList => _BlackJackManager.floatScoreList;
     private List<List<float>> MyCardsPracticeList => _PracticeSet.MyCardsPracticeList;
     private List<List<float>> YourCardsPracticeList => _PracticeSet.YourCardsPracticeList;
     private List<List<float>> FieldCardsPracticeList => _PracticeSet.FieldCardsPracticeList;
@@ -37,14 +38,14 @@ public class BlackJackRecorder : MonoBehaviour
         for (int i = 0; i < FieldCardsPracticeList[0].Count; i++) Content += ",FieldCards" + (i + 1).ToString();
         for (int i = 0; i < MyCardsPracticeList[0].Count; i++) Content += ",MyCards" + (i + 1).ToString();
         for (int i = 0; i < YourCardsPracticeList[0].Count; i++) Content += ",YourCards" + (i + 1).ToString();
-        Content += "MySelectedTime,YourSelectedTime,Score,Trial\n";
+        Content += "MySelectedTime,YourSelectedTime,Score,floatScore,Trial\n";
         for (int i = 0; i < TrialAll; i++)
         {
             Content = "";
             for (int j = 0; j < FieldCardsPracticeList[i].Count; j++) Content += "," + FieldCardsPracticeList[i][j].ToString();
             for (int j = 0; j < MyCardsPracticeList[i].Count; j++) Content += "," + MyCardsPracticeList[i][j].ToString();
             for (int j = 0; j < YourCardsPracticeList[i].Count; j++) Content += "," + YourCardsPracticeList[i][j].ToString();
-            Content += "," + MySelectedTime[i].ToString() + "," + YourSelectedTime[i].ToString() + "," + ScoreList[i].ToString() + "," + Trial.ToString() + "\n";
+            Content += "," + MySelectedTime[i].ToString() + "," + YourSelectedTime[i].ToString() + "," + ScoreList[i].ToString() + "," + floatScoreList[i].ToString() + "," + Trial.ToString() + "\n";
         }
         return Content;
     }
