@@ -454,7 +454,11 @@ public class PracticeSet: MonoBehaviourPunCallbacks
     {
         MyCards = new List<float>() { -22, 0, 16 };
         YourCards = new List<float>() { 22, 0, 16 };
-        FieldCards = new List<float>() { 0, 0, 0, 0, 100, 100, 0, 0, 100, 0, 0, 16 };
+        Vector3 initialVelocity = new Vector3(Random.Range(-0.1f, 0.1f), Random.Range(16f, 24f), Random.Range(5f, 9f));
+        Vector3 initialAngularVelocity = new Vector3(Random.Range(-0.5f, 0.5f), Random.Range(-2f, 2f), Random.Range(-0.5f, 0.5f));
+        Vector3 landingpoint = PredictLandingPoint(new Vector3(0, 0, -10), initialVelocity, initialAngularVelocity);
+        //Debug.Log(landingpoint.x);
+        FieldCards = new List<float>() { 0, 0, -10, initialVelocity.x, initialVelocity.y, initialVelocity.z, initialAngularVelocity.x, initialAngularVelocity.y, initialAngularVelocity.z, landingpoint.x, landingpoint.y, landingpoint.z };
         /*
         MyCards = CardPattern.MyCardPattern[_order];
         YourCards = CardPattern.YourCardPattern[_order];
@@ -463,6 +467,40 @@ public class PracticeSet: MonoBehaviourPunCallbacks
         //FieldCards = CardPattern.FieldCardPattern[_order];
         FieldCardsSuit = CardPattern.FieldCardPatternSuit[_order];*/
     }
+
+
+    Vector3 PredictLandingPoint(Vector3 initialPosition, Vector3 initialVelocity, Vector3 initialAngularVelocity)
+    {
+
+        Vector3 currentPosition = initialPosition;
+        Vector3 currentVelocity = initialVelocity;
+        Vector3 gravity = Physics.gravity;
+        Vector3 currentAngularVelocity = initialAngularVelocity;
+
+
+        // Calculate Magnus effect
+        Vector3 magnusForce = Vector3.Cross(currentAngularVelocity, currentVelocity) * 0.1f; // 0.1f is a magnus effect coefficient
+
+        // Update velocity with gravity and Magnus effect
+        currentVelocity += (gravity + magnusForce) * Time.fixedDeltaTime;
+        //currentVelocity += gravity * timestep;
+        currentPosition += currentVelocity * Time.fixedDeltaTime;
+        while (currentPosition.y > 0)
+        {
+            // Calculate Magnus effect
+            magnusForce = Vector3.Cross(currentAngularVelocity, currentVelocity) * 0.1f; // 0.1f is a magnus effect coefficient
+
+            // Update velocity with gravity and Magnus effect
+            currentVelocity += (gravity + magnusForce) * Time.fixedDeltaTime;
+            //currentVelocity += gravity * timestep;
+            currentPosition += currentVelocity * Time.fixedDeltaTime;
+        }
+
+        currentPosition.y = 0; // Ensure the y-coordinate is exactly 0
+
+        return currentPosition;
+    }
+
     void DecidingCards(int _j)
     {
         DecideRandomCards();
