@@ -3,6 +3,7 @@ using UnityEngine;
 using Photon.Pun;
 using System.Text.RegularExpressions;
 using System.Linq;
+using System;
 
 
 public class PracticeSet: MonoBehaviourPunCallbacks
@@ -13,11 +14,33 @@ public class PracticeSet: MonoBehaviourPunCallbacks
     public int YourSelectedCard { get; set; }
     public List<float> MySelectedTime { get; set; }
     public List<float> YourSelectedTime { get; set; }
+    public List<float> MyApproachedTime { get; set; }
+    public List<float> YourApproachedTime { get; set; }
     public int MySelectedBet { get; set; }
     public int YourSelectedBet { get; set; }
     public float TimeLeft { get; set; } = 0;
     public bool HostPressed { get; set; } = false;
     public bool ClientPressed { get; set; } = false;
+    public void SetMyApproachTime(float _myapproachtime, int trial)
+    {
+        MyApproachedTime[trial] = _myapproachtime;
+        _PhotonView.RPC("UpdateMyApproachedTimeOnAllClients", RpcTarget.Others, _myapproachtime);
+    }
+    [PunRPC]
+    void UpdateMyApproachedTimeOnAllClients(float _myapproachtime, int trial)
+    {
+        MyApproachedTime[trial] = _myapproachtime;
+    }
+    public void SetYourApproachTime(float _yourapproachtime, int trial)
+    {
+        YourApproachedTime[trial] = _yourapproachtime;
+        _PhotonView.RPC("UpdateYourApproachedTimeOnAllClients", RpcTarget.Others, _yourapproachtime);
+    }
+    [PunRPC]
+    void UpdateYourApproachedTimeOnAllClients(float _yourapproachtime, int trial)
+    {
+        YourApproachedTime[trial] = _yourapproachtime;
+    }
     public void SetHostPressed(bool _hostpressed)
     {
         HostPressed = _hostpressed;
@@ -194,13 +217,13 @@ public class PracticeSet: MonoBehaviourPunCallbacks
     {
         List<List<float>> temp = FieldCardsPracticeList;
         FieldCardsPracticeList = temp;
-        _PhotonView.RPC("UpdateFieldCardsPracticeListOnAllClients", RpcTarget.Others, SerializeCardList(_FieldCardsPracticeList));
+        _PhotonView.RPC("UpdateFieldCardsPracticeListOnAllClients", RpcTarget.Others, SerializeCardList(_FieldCardsPracticeList), _FieldCardsPracticeList[0].Count);
     }
     [PunRPC]
-    void UpdateFieldCardsPracticeListOnAllClients(string serializeCards)
+    void UpdateFieldCardsPracticeListOnAllClients(string serializeCards, int _length)
     {
         // ここでカードデータを再構築
-        FieldCardsPracticeList = DeserializeFieldCardList(serializeCards);
+        FieldCardsPracticeList = DeserializeFieldCardList(serializeCards, _length);
     }
 
     private string SerializeCardList(List<List<float>> cards)
@@ -238,7 +261,7 @@ public class PracticeSet: MonoBehaviourPunCallbacks
         }
         return cardList;
     }
-    private List<List<float>> DeserializeFieldCardList(string json)
+    private List<List<float>> DeserializeFieldCardList(string json, int _length)
     {
         Regex regex = new Regex(@"-?\d+(\.\d+)?");
 
@@ -252,9 +275,9 @@ public class PracticeSet: MonoBehaviourPunCallbacks
         for (int i = 0; i < NumberofSet; i++)
         {
             List<float> Element = new List<float>();
-            for (int j = 0; j < 12; j++)
+            for (int j = 0; j < _length; j++)
             {
-                Element.Add(numbers[i * 12 + j]);
+                Element.Add(numbers[i * _length + j]);
             }
             cardList.Add(Element);
         }
@@ -420,10 +443,10 @@ public class PracticeSet: MonoBehaviourPunCallbacks
     }
     private int RandomValue()
     {
-        int result = Random.Range(0, 4);
+        int result = UnityEngine.Random.Range(0, 4);
         while(result == 1)
         {
-            result = Random.Range(0, 4);
+            result = UnityEngine.Random.Range(0, 4);
         }
         Debug.Log(result);
         return result;
@@ -454,11 +477,11 @@ public class PracticeSet: MonoBehaviourPunCallbacks
     {
         MyCards = new List<float>() { -22, 0, 16 };
         YourCards = new List<float>() { 22, 0, 16 };
-        Vector3 initialVelocity = new Vector3(Random.Range(-0.1f, 0.1f), Random.Range(16f, 24f), Random.Range(5f, 9f));
-        Vector3 initialAngularVelocity = new Vector3(Random.Range(-0.5f, 0.5f), Random.Range(-2f, 2f), Random.Range(-0.5f, 0.5f));
-        Vector3 landingpoint = PredictLandingPoint(new Vector3(0, 0, -10), initialVelocity, initialAngularVelocity);
+        Vector3 initialVelocity = new Vector3(UnityEngine.Random.Range(-0.1f, 0.1f), UnityEngine.Random.Range(16f, 24f), UnityEngine.Random.Range(5f, 9f));
+        Vector3 initialAngularVelocity = new Vector3(UnityEngine.Random.Range(-0.5f, 0.5f), UnityEngine.Random.Range(-2f, 2f), UnityEngine.Random.Range(-0.5f, 0.5f));
+        List<float> landingpoint = PredictLandingPoint(new Vector3(0, 0, -10), initialVelocity, initialAngularVelocity);
         //Debug.Log(landingpoint.x);
-        FieldCards = new List<float>() { 0, 0, -10, initialVelocity.x, initialVelocity.y, initialVelocity.z, initialAngularVelocity.x, initialAngularVelocity.y, initialAngularVelocity.z, landingpoint.x, landingpoint.y, landingpoint.z };
+        FieldCards = new List<float>() { 0, 0, -10, initialVelocity.x, initialVelocity.y, initialVelocity.z, initialAngularVelocity.x, initialAngularVelocity.y, initialAngularVelocity.z, landingpoint[0], landingpoint[1], landingpoint[2], landingpoint[3]};
         /*
         MyCards = CardPattern.MyCardPattern[_order];
         YourCards = CardPattern.YourCardPattern[_order];
@@ -469,14 +492,14 @@ public class PracticeSet: MonoBehaviourPunCallbacks
     }
 
 
-    Vector3 PredictLandingPoint(Vector3 initialPosition, Vector3 initialVelocity, Vector3 initialAngularVelocity)
+    List<float> PredictLandingPoint(Vector3 initialPosition, Vector3 initialVelocity, Vector3 initialAngularVelocity)
     {
 
         Vector3 currentPosition = initialPosition;
         Vector3 currentVelocity = initialVelocity;
         Vector3 gravity = Physics.gravity;
         Vector3 currentAngularVelocity = initialAngularVelocity;
-
+        float landingtime = 0;
 
         // Calculate Magnus effect
         Vector3 magnusForce = Vector3.Cross(currentAngularVelocity, currentVelocity) * 0.1f; // 0.1f is a magnus effect coefficient
@@ -485,6 +508,7 @@ public class PracticeSet: MonoBehaviourPunCallbacks
         currentVelocity += (gravity + magnusForce) * Time.fixedDeltaTime;
         //currentVelocity += gravity * timestep;
         currentPosition += currentVelocity * Time.fixedDeltaTime;
+        landingtime += Time.fixedDeltaTime;
         while (currentPosition.y > 0)
         {
             // Calculate Magnus effect
@@ -494,11 +518,12 @@ public class PracticeSet: MonoBehaviourPunCallbacks
             currentVelocity += (gravity + magnusForce) * Time.fixedDeltaTime;
             //currentVelocity += gravity * timestep;
             currentPosition += currentVelocity * Time.fixedDeltaTime;
+            landingtime += Time.fixedDeltaTime;
         }
 
         currentPosition.y = 0; // Ensure the y-coordinate is exactly 0
 
-        return currentPosition;
+        return new List<float>() { currentPosition.x, currentPosition.y, currentPosition.z, landingtime};
     }
 
     void DecidingCards(int _j)

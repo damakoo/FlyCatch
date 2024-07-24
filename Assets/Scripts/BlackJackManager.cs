@@ -150,7 +150,7 @@ public class BlackJackManager : MonoBehaviour
                     nowTime += Time.deltaTime;
                     _PracticeSet.SetTimeLeft(TimeLimit - nowTime);
                     BlackJacking();
-                    if (nowTime > TimeLimit) PhotonMoveToSelectBet();
+                    if (nowTime > _PracticeSet.FieldCardsPracticeList[nowTrial][12] + Time.fixedDeltaTime) PhotonMoveToSelectBet();
                 }
                 else if (_PracticeSet.BlackJackState == PracticeSet.BlackJackStateList.SelectBet)
                 {
@@ -248,13 +248,15 @@ public class BlackJackManager : MonoBehaviour
     }
     void BlackJacking()
     {
-
         distance_host = Vector3.Magnitude(fallpoint - HostPlayer.transform.position);
         distance_client = Vector3.Magnitude(fallpoint - ClientPlayer.transform.position);
         // �}�E�X�{�^�����N���b�N���ꂽ���m�F
         if(distance_host < AmountOfMove * 1.5f * 0.1f)
         {
-            _PracticeSet.SetMySelectedTime(Time.deltaTime, nowTrial);
+            if (_PracticeSet.MyApproachedTime[nowTrial] == 0)
+            {
+                _PracticeSet.SetMyApproachTime(nowTime,nowTrial);
+            }
         }
         else if (Input.GetKey(KeyCode.F))
         {
@@ -268,7 +270,10 @@ public class BlackJackManager : MonoBehaviour
 
         if (distance_client < AmountOfMove * 1.5f * 0.1f)
         {
-            _PracticeSet.SetYourSelectedTime(Time.deltaTime, nowTrial);
+            if (_PracticeSet.MyApproachedTime[nowTrial] == 0)
+            {
+                _PracticeSet.SetYourApproachTime(nowTime, nowTrial);
+            }
         }
         else if (Input.GetKey(KeyCode.J))
         {
@@ -514,7 +519,7 @@ public class BlackJackManager : MonoBehaviour
         float _succeed = (distance_host < AmountOfMove * 1.5f * 0.1f || distance_client < AmountOfMove * 1.5f * 0.1f) ? 1 : 0;
         float Mydistance = Vector3.Magnitude(new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][0], _PracticeSet.FieldCardsPracticeList[nowTrial][1], _PracticeSet.FieldCardsPracticeList[nowTrial][2]) - new Vector3(_PracticeSet.MyCardsPracticeList[nowTrial][0], _PracticeSet.MyCardsPracticeList[nowTrial][1], _PracticeSet.MyCardsPracticeList[nowTrial][2]));
         float Yourdistance = Vector3.Magnitude(new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][0], _PracticeSet.FieldCardsPracticeList[nowTrial][1], _PracticeSet.FieldCardsPracticeList[nowTrial][2]) - new Vector3(_PracticeSet.YourCardsPracticeList[nowTrial][0], _PracticeSet.YourCardsPracticeList[nowTrial][1], _PracticeSet.YourCardsPracticeList[nowTrial][2]));
-        return _succeed * Mathf.Abs(_PracticeSet.MySelectedTime[nowTrial] - _PracticeSet.YourSelectedTime[nowTrial]) / (Mydistance - Yourdistance);
+        return _succeed * Mathf.Abs(_PracticeSet.MySelectedTime[nowTrial] - _PracticeSet.YourSelectedTime[nowTrial]);// / (Mydistance - Yourdistance);
     }
     public void MakeReadyHost()
     {
