@@ -24,6 +24,8 @@ public class BlackJackRecorder : MonoBehaviour
     private int TrialAll => _PracticeSet.TrialAll;
     private List<float> MySelectedTime => _PracticeSet.MySelectedTime;
     private List<float> YourSelectedTime => _PracticeSet.YourSelectedTime;
+    private List<float> MyApproachedTime => _PracticeSet.MyApproachedTime;
+    private List<float> YourApproachedTime => _PracticeSet.YourApproachedTime;
     public int Trial = 1;
 
 
@@ -35,17 +37,16 @@ public class BlackJackRecorder : MonoBehaviour
     string WriteContent()
     {
         string Content = "";
-        for (int i = 0; i < FieldCardsPracticeList[0].Count; i++) Content += ",FieldCards" + (i + 1).ToString();
-        for (int i = 0; i < MyCardsPracticeList[0].Count; i++) Content += ",MyCards" + (i + 1).ToString();
-        for (int i = 0; i < YourCardsPracticeList[0].Count; i++) Content += ",YourCards" + (i + 1).ToString();
-        Content += "MySelectedTime,YourSelectedTime,Score,floatScore,Trial\n";
+        for (int i = 0; i < FieldCardsPracticeList[0].Count; i++) Content += "FieldCards" + (i + 1).ToString() + ",";
+        for (int i = 0; i < MyCardsPracticeList[0].Count; i++) Content += "MyCards" + (i + 1).ToString() + ",";
+        for (int i = 0; i < YourCardsPracticeList[0].Count; i++) Content += "YourCards" + (i + 1).ToString() + ",";
+        Content += "MySelectedTime,YourSelectedTime,MyApproachedTime,YourApproachedTime,Score,floatScore,Trial\n";
         for (int i = 0; i < TrialAll; i++)
         {
-            Content = "";
-            for (int j = 0; j < FieldCardsPracticeList[i].Count; j++) Content += "," + FieldCardsPracticeList[i][j].ToString();
-            for (int j = 0; j < MyCardsPracticeList[i].Count; j++) Content += "," + MyCardsPracticeList[i][j].ToString();
-            for (int j = 0; j < YourCardsPracticeList[i].Count; j++) Content += "," + YourCardsPracticeList[i][j].ToString();
-            Content += "," + MySelectedTime[i].ToString() + "," + YourSelectedTime[i].ToString() + "," + ScoreList[i].ToString() + "," + floatScoreList[i].ToString() + "," + Trial.ToString() + "\n";
+            for (int j = 0; j < FieldCardsPracticeList[i].Count; j++) Content += FieldCardsPracticeList[i][j].ToString() + ",";
+            for (int j = 0; j < MyCardsPracticeList[i].Count; j++) Content += MyCardsPracticeList[i][j].ToString() + ",";
+            for (int j = 0; j < YourCardsPracticeList[i].Count; j++) Content += YourCardsPracticeList[i][j].ToString() + ",";
+            Content += MySelectedTime[i].ToString() + "," + YourSelectedTime[i].ToString() + "," + MyApproachedTime[i].ToString() + "," + YourApproachedTime[i].ToString() + "," + ScoreList[i].ToString() + "," + floatScoreList[i].ToString() + "," + Trial.ToString() + "\n";
         }
         return Content;
     }

@@ -6,7 +6,7 @@ using System.Linq;
 using System;
 
 
-public class PracticeSet: MonoBehaviourPunCallbacks
+public class PracticeSet : MonoBehaviourPunCallbacks
 {
     BlackJackManager _BlackJackManager;
     private PhotonView _PhotonView;
@@ -24,7 +24,7 @@ public class PracticeSet: MonoBehaviourPunCallbacks
     public void SetMyApproachTime(float _myapproachtime, int trial)
     {
         MyApproachedTime[trial] = _myapproachtime;
-        _PhotonView.RPC("UpdateMyApproachedTimeOnAllClients", RpcTarget.Others, _myapproachtime);
+        _PhotonView.RPC("UpdateMyApproachedTimeOnAllClients", RpcTarget.Others, _myapproachtime, trial);
     }
     [PunRPC]
     void UpdateMyApproachedTimeOnAllClients(float _myapproachtime, int trial)
@@ -34,7 +34,7 @@ public class PracticeSet: MonoBehaviourPunCallbacks
     public void SetYourApproachTime(float _yourapproachtime, int trial)
     {
         YourApproachedTime[trial] = _yourapproachtime;
-        _PhotonView.RPC("UpdateYourApproachedTimeOnAllClients", RpcTarget.Others, _yourapproachtime);
+        _PhotonView.RPC("UpdateYourApproachedTimeOnAllClients", RpcTarget.Others, _yourapproachtime, trial);
     }
     [PunRPC]
     void UpdateYourApproachedTimeOnAllClients(float _yourapproachtime, int trial)
@@ -173,7 +173,7 @@ public class PracticeSet: MonoBehaviourPunCallbacks
     void UpdateSetHostPlayerPos(float _hostplayerpos_x, float _hostplayerpos_y, float _hostplayerpos_z)
     {
         // ここでカードデータを再構築
-        HostPlayerPos = new Vector3(_hostplayerpos_x,_hostplayerpos_y,_hostplayerpos_z);
+        HostPlayerPos = new Vector3(_hostplayerpos_x, _hostplayerpos_y, _hostplayerpos_z);
     }
     public void SetClientPlayerPos(float _clientplayerpos_x, float _clientplayerpos_y, float _clientplayerpos_z)
     {
@@ -250,12 +250,12 @@ public class PracticeSet: MonoBehaviourPunCallbacks
         }
         List<List<float>> cardList = new List<List<float>>();
         // JSON 文字列を int[] の配列に変換
-        for(int i = 0; i<NumberofSet; i++)
+        for (int i = 0; i < NumberofSet; i++)
         {
             List<float> Element = new List<float>();
-            for(int j = 0; j < NumberofCards; j++)
+            for (int j = 0; j < NumberofCards; j++)
             {
-                Element.Add(numbers[i* NumberofCards + j]);
+                Element.Add(numbers[i * NumberofCards + j]);
             }
             cardList.Add(Element);
         }
@@ -297,7 +297,7 @@ public class PracticeSet: MonoBehaviourPunCallbacks
         foreach (Match match in regex.Matches(serializedCards))
         {
             numbers.Add(int.Parse(match.Value));
-        }        
+        }
         return numbers;
     }
 
@@ -349,7 +349,7 @@ public class PracticeSet: MonoBehaviourPunCallbacks
     void UpdateFieldCardsSuitPracticeListOnAllClients(string serializeCards)
     {
         // ここでカードデータを再構築
-       // FieldCardsSuitPracticeList = DeserializeFieldCard(serializeCards);
+        // FieldCardsSuitPracticeList = DeserializeFieldCard(serializeCards);
     }
 
     public enum BlackJackStateList
@@ -410,7 +410,7 @@ public class PracticeSet: MonoBehaviourPunCallbacks
         {
             //DecidingCards(Random.Range(0, NumberofCards));
             //DecidingCards(RandomValue());
-            DecideDecidedCards(_order[i]-1);
+            DecideDecidedCards(_order[i] - 1);
             FieldCardsPracticeList.Add(FieldCards);
             MyCardsPracticeList.Add(MyCards);
             YourCardsPracticeList.Add(YourCards);
@@ -431,7 +431,7 @@ public class PracticeSet: MonoBehaviourPunCallbacks
         {
             //DecidingCards(Random.Range(0, NumberofCards));
             //DecidingCards(RandomValue());
-            DecideDecidedCards(_order[i]-1);
+            DecideDecidedCards(_order[i] - 1);
             FieldCardsPracticeList.Add(FieldCards);
             MyCardsPracticeList.Add(MyCards);
             YourCardsPracticeList.Add(YourCards);
@@ -444,7 +444,7 @@ public class PracticeSet: MonoBehaviourPunCallbacks
     private int RandomValue()
     {
         int result = UnityEngine.Random.Range(0, 4);
-        while(result == 1)
+        while (result == 1)
         {
             result = UnityEngine.Random.Range(0, 4);
         }
@@ -477,11 +477,11 @@ public class PracticeSet: MonoBehaviourPunCallbacks
     {
         MyCards = new List<float>() { -22, 0, 16 };
         YourCards = new List<float>() { 22, 0, 16 };
-        Vector3 initialVelocity = new Vector3(UnityEngine.Random.Range(-0.1f, 0.1f), UnityEngine.Random.Range(16f, 24f), UnityEngine.Random.Range(5f, 9f));
-        Vector3 initialAngularVelocity = new Vector3(UnityEngine.Random.Range(-0.5f, 0.5f), UnityEngine.Random.Range(-2f, 2f), UnityEngine.Random.Range(-0.5f, 0.5f));
+        Vector3 initialVelocity = new Vector3(Mathf.Sign(UnityEngine.Random.Range(-1f, 1f)) * UnityEngine.Random.Range(7f, 8f), UnityEngine.Random.Range(16f, 24f), UnityEngine.Random.Range(5f, 9f));
+        Vector3 initialAngularVelocity = new Vector3(0, Mathf.Sign(initialVelocity.x) * UnityEngine.Random.Range(1f, 1.5f),0);
         List<float> landingpoint = PredictLandingPoint(new Vector3(0, 0, -10), initialVelocity, initialAngularVelocity);
         //Debug.Log(landingpoint.x);
-        FieldCards = new List<float>() { 0, 0, -10, initialVelocity.x, initialVelocity.y, initialVelocity.z, initialAngularVelocity.x, initialAngularVelocity.y, initialAngularVelocity.z, landingpoint[0], landingpoint[1], landingpoint[2], landingpoint[3]};
+        FieldCards = new List<float>() { 0, 0, -10, initialVelocity.x, initialVelocity.y, initialVelocity.z, initialAngularVelocity.x, initialAngularVelocity.y, initialAngularVelocity.z, landingpoint[0], landingpoint[1], landingpoint[2], landingpoint[3] };
         /*
         MyCards = CardPattern.MyCardPattern[_order];
         YourCards = CardPattern.YourCardPattern[_order];
@@ -523,7 +523,7 @@ public class PracticeSet: MonoBehaviourPunCallbacks
 
         currentPosition.y = 0; // Ensure the y-coordinate is exactly 0
 
-        return new List<float>() { currentPosition.x, currentPosition.y, currentPosition.z, landingtime};
+        return new List<float>() { currentPosition.x, currentPosition.y, currentPosition.z, landingtime };
     }
 
     void DecidingCards(int _j)
@@ -691,7 +691,7 @@ public class PracticeSet: MonoBehaviourPunCallbacks
         // ここでカードデータを再構築
         _BlackJackManager.MoveToShowMyCards(1);
     }
-    
+
     public void MoveToSelectCards()
     {
         _BlackJackManager.MoveToSelectCards();
@@ -727,7 +727,7 @@ public class PracticeSet: MonoBehaviourPunCallbacks
     }
     public void MakeReadyHost()
     {
-       _BlackJackManager.MakeReadyHost();
+        _BlackJackManager.MakeReadyHost();
         _PhotonView.RPC("RPCMakeReadyHost", RpcTarget.Others);
     }
     [PunRPC]

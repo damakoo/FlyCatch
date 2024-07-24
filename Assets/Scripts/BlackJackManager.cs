@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using Unity.VisualScripting;
+using System;
 
 public class BlackJackManager : MonoBehaviour
 {
@@ -34,6 +35,7 @@ public class BlackJackManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI TimeLimitObj_str;
     [SerializeField] GameObject Ball;
     public Rigidbody Ball_rigidbody;
+    private MeshRenderer Ball_mesh;
     [SerializeField] GameObject HostPlayer;
     [SerializeField] GameObject ClientPlayer;
     [SerializeField] float AmountOfMove = 0.01f;
@@ -72,6 +74,7 @@ public class BlackJackManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Ball_mesh = Ball.GetComponent<MeshRenderer>();
         FinishUI.text = "";
         TimeLimitObj_str.text = "";
         HostPlayerAnimator = HostPlayer.GetComponent<Animator>();
@@ -90,6 +93,8 @@ public class BlackJackManager : MonoBehaviour
                 // Calculate Magnus effect
                 magnusForce = Vector3.Cross(currentAngularVelocity, currentVelocity) * 0.1f; // 0.1f is a magnus effect coefficient
                 Ball_rigidbody.velocity = currentVelocity + magnusForce * Time.fixedDeltaTime;
+                Console.WriteLine(magnusForce.x);
+                Console.WriteLine(currentVelocity.x);
             }
         }
     }
@@ -196,12 +201,18 @@ public class BlackJackManager : MonoBehaviour
             {
                 SelectBetting();
             }
+            else if (_hostorclient == HostorClient.Client && _PracticeSet.BlackJackState == PracticeSet.BlackJackStateList.Finished)
+            {
+                if (Input.GetKeyDown(KeyCode.Space)) PressedReload();
+                SelectBetting();
+            }
             else if (_hostorclient == HostorClient.Client)
             {
                 nowTime = 0;
             }
 
-            if (_PracticeSet.BlackJackState != PracticeSet.BlackJackStateList.BeforeStart) TimeLimitObj_str.text = "Time: " + Mathf.CeilToInt(_PracticeSet.TimeLeft).ToString();
+            if (_PracticeSet.BlackJackState == PracticeSet.BlackJackStateList.WaitForNextTrial || _PracticeSet.BlackJackState == PracticeSet.BlackJackStateList.ShowResult) TimeLimitObj_str.text = "Rest: " + Mathf.CeilToInt(_PracticeSet.TimeLeft).ToString();
+            else TimeLimitObj_str.text = "";
 
             if (Input.GetKeyDown(KeyCode.F))
             {
@@ -251,37 +262,27 @@ public class BlackJackManager : MonoBehaviour
         distance_host = Vector3.Magnitude(fallpoint - HostPlayer.transform.position);
         distance_client = Vector3.Magnitude(fallpoint - ClientPlayer.transform.position);
         // �}�E�X�{�^�����N���b�N���ꂽ���m�F
-        if(distance_host < AmountOfMove * 1.5f * 0.1f)
-        {
-            if (_PracticeSet.MyApproachedTime[nowTrial] == 0)
-            {
-                _PracticeSet.SetMyApproachTime(nowTime,nowTrial);
-            }
-        }
-        else if (Input.GetKey(KeyCode.F))
+        if (distance_host > AmountOfMove * 1.5f * 0.1f && Input.GetKey(KeyCode.F))
         {
             _PracticeSet.SetMySelectedTime(Time.deltaTime, nowTrial);
-            if (distance_host > AmountOfMove * 0.1f)
+
+            Vector3 destination = HostPlayer.transform.position + (fallpoint - HostPlayer.transform.position) / distance_host * AmountOfMove * Time.deltaTime;
+            _PracticeSet.SetHostPlayerPos(destination.x, destination.y, destination.z);
+            if (distance_host - AmountOfMove * Time.deltaTime < AmountOfMove * 1.5f * 0.1f)
             {
-                Vector3 destination = HostPlayer.transform.position + (fallpoint - HostPlayer.transform.position) / distance_host * AmountOfMove * Time.deltaTime;
-                _PracticeSet.SetHostPlayerPos(destination.x, destination.y, destination.z);
+                _PracticeSet.SetMyApproachTime(nowTime, nowTrial);
             }
         }
 
-        if (distance_client < AmountOfMove * 1.5f * 0.1f)
-        {
-            if (_PracticeSet.MyApproachedTime[nowTrial] == 0)
-            {
-                _PracticeSet.SetYourApproachTime(nowTime, nowTrial);
-            }
-        }
-        else if (Input.GetKey(KeyCode.J))
+        if (Input.GetKey(KeyCode.J))
         {
             _PracticeSet.SetYourSelectedTime(Time.deltaTime, nowTrial);
-            if (distance_client > AmountOfMove * 0.1f)
+
+            Vector3 destination = ClientPlayer.transform.position + (fallpoint - ClientPlayer.transform.position) / distance_client * AmountOfMove * Time.deltaTime;
+            _PracticeSet.SetClientPlayerPos(destination.x, destination.y, destination.z);
+            if (distance_client - AmountOfMove * Time.deltaTime < AmountOfMove * 1.5f * 0.1f)
             {
-                Vector3 destination = ClientPlayer.transform.position + (fallpoint - ClientPlayer.transform.position) / distance_client * AmountOfMove * Time.deltaTime;
-                _PracticeSet.SetClientPlayerPos(destination.x, destination.y, destination.z);
+                _PracticeSet.SetYourApproachTime(nowTime, nowTrial);
             }
         }
         HostPlayer.transform.position = _PracticeSet.HostPlayerPos;
@@ -368,17 +369,17 @@ public class BlackJackManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
 
-                if (_hostorclient == HostorClient.Host)
-                {
-                    _PracticeSet.SetHostPressed(true);
-                }
-                else if (_hostorclient == HostorClient.Client)
-                {
-                    _PracticeSet.SetClientPressed(true);
-                }
-                WaitforStartUi.SetActive(true);
-                StartingUi.SetActive(false);
-                StartingUi_button.SetActive(false);
+            if (_hostorclient == HostorClient.Host)
+            {
+                _PracticeSet.SetHostPressed(true);
+            }
+            else if (_hostorclient == HostorClient.Client)
+            {
+                _PracticeSet.SetClientPressed(true);
+            }
+            WaitforStartUi.SetActive(true);
+            StartingUi.SetActive(false);
+            StartingUi_button.SetActive(false);
         }
     }
 
@@ -419,9 +420,10 @@ public class BlackJackManager : MonoBehaviour
     public void MoveToSelectCards()
     {
         //_cardslist.AllOpen();
+        Ball_mesh.enabled = true;
         Ball_rigidbody.MovePosition(new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][0], _PracticeSet.FieldCardsPracticeList[nowTrial][1], _PracticeSet.FieldCardsPracticeList[nowTrial][2]));
-        Ball_rigidbody.velocity= new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][3], _PracticeSet.FieldCardsPracticeList[nowTrial][4], _PracticeSet.FieldCardsPracticeList[nowTrial][5]);
-        Ball_rigidbody.angularVelocity= new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][6], _PracticeSet.FieldCardsPracticeList[nowTrial][7], _PracticeSet.FieldCardsPracticeList[nowTrial][8]);
+        Ball_rigidbody.velocity = new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][3], _PracticeSet.FieldCardsPracticeList[nowTrial][4], _PracticeSet.FieldCardsPracticeList[nowTrial][5]);
+        Ball_rigidbody.angularVelocity = new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][6], _PracticeSet.FieldCardsPracticeList[nowTrial][7], _PracticeSet.FieldCardsPracticeList[nowTrial][8]);
         fallpoint = new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][9], _PracticeSet.FieldCardsPracticeList[nowTrial][10], _PracticeSet.FieldCardsPracticeList[nowTrial][11]);
         _PracticeSet.SetHostPlayerPos(_PracticeSet.MyCardsPracticeList[nowTrial][0], _PracticeSet.MyCardsPracticeList[nowTrial][1], _PracticeSet.MyCardsPracticeList[nowTrial][2]);
         _PracticeSet.SetClientPlayerPos(_PracticeSet.YourCardsPracticeList[nowTrial][0], _PracticeSet.YourCardsPracticeList[nowTrial][1], _PracticeSet.YourCardsPracticeList[nowTrial][2]);
@@ -453,10 +455,13 @@ public class BlackJackManager : MonoBehaviour
         //Ball.transform.position = Vector3.one;
         //Debug.Log(Ball.transform.position.x);
         Score = CalculateResult();
+        if (Score == 1) Ball_mesh.enabled = false;
         floatScore = CalculatefloatScore();
         //_blackJackRecorder.RecordResult((_PracticeSet.MySelectedCard == NOTSELCETEDNUMBER) ? 0 : _cardslist.MyCardsList[_PracticeSet.MySelectedCard].Number, (_PracticeSet.YourSelectedCard == NOTSELCETEDNUMBER) ? 0 : _cardslist.YourCardsList[_PracticeSet.YourSelectedCard].Number, (useSuit) ? CalculateSuitScore() : Score, _PracticeSet.MySelectedBet, _PracticeSet.YourSelectedBet);
         _PracticeSet.BlackJackState = PracticeSet.BlackJackStateList.ShowResult;
-        MyScoreUI.text = (Score == 1?"Succeed!":"Failed!") + "Score:" + floatScore.ToString() + "\n Left Pressed:" + _PracticeSet.MySelectedTime[nowTrial].ToString("F1") + "s\n Right Pressed:" + _PracticeSet.YourSelectedTime[nowTrial].ToString("F1") + "s";
+        MyScoreUI.text = (Score == 1 ? "Succeed!" : "Failed!") + "Score:" + floatScore.ToString("F1")
+            + "\n Left Pressed:" + _PracticeSet.MySelectedTime[nowTrial].ToString("F1") + "s," + "Approached:" + (_PracticeSet.MyApproachedTime[nowTrial] < 90 ? _PracticeSet.MyApproachedTime[nowTrial].ToString("F1") : "NaN") + "s"
+            + "\n Right Pressed:" + _PracticeSet.YourSelectedTime[nowTrial].ToString("F1") + "s," + "Approached:" + (_PracticeSet.YourApproachedTime[nowTrial] < 90 ? _PracticeSet.YourApproachedTime[nowTrial].ToString("F1") : "NaN") + "s";
         ScoreList.Add(Score);
         floatScoreList.Add(floatScore);
         if (useSuit)
@@ -517,9 +522,12 @@ public class BlackJackManager : MonoBehaviour
     private float CalculatefloatScore()
     {
         float _succeed = (distance_host < AmountOfMove * 1.5f * 0.1f || distance_client < AmountOfMove * 1.5f * 0.1f) ? 1 : 0;
-        float Mydistance = Vector3.Magnitude(new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][0], _PracticeSet.FieldCardsPracticeList[nowTrial][1], _PracticeSet.FieldCardsPracticeList[nowTrial][2]) - new Vector3(_PracticeSet.MyCardsPracticeList[nowTrial][0], _PracticeSet.MyCardsPracticeList[nowTrial][1], _PracticeSet.MyCardsPracticeList[nowTrial][2]));
-        float Yourdistance = Vector3.Magnitude(new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][0], _PracticeSet.FieldCardsPracticeList[nowTrial][1], _PracticeSet.FieldCardsPracticeList[nowTrial][2]) - new Vector3(_PracticeSet.YourCardsPracticeList[nowTrial][0], _PracticeSet.YourCardsPracticeList[nowTrial][1], _PracticeSet.YourCardsPracticeList[nowTrial][2]));
-        return _succeed * Mathf.Abs(_PracticeSet.MySelectedTime[nowTrial] - _PracticeSet.YourSelectedTime[nowTrial]);// / (Mydistance - Yourdistance);
+        //float Mydistance = Vector3.Magnitude(new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][0], _PracticeSet.FieldCardsPracticeList[nowTrial][1], _PracticeSet.FieldCardsPracticeList[nowTrial][2]) - new Vector3(_PracticeSet.MyCardsPracticeList[nowTrial][0], _PracticeSet.MyCardsPracticeList[nowTrial][1], _PracticeSet.MyCardsPracticeList[nowTrial][2]));
+        //float Yourdistance = Vector3.Magnitude(new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][0], _PracticeSet.FieldCardsPracticeList[nowTrial][1], _PracticeSet.FieldCardsPracticeList[nowTrial][2]) - new Vector3(_PracticeSet.YourCardsPracticeList[nowTrial][0], _PracticeSet.YourCardsPracticeList[nowTrial][1], _PracticeSet.YourCardsPracticeList[nowTrial][2]));
+        //return _succeed * Mathf.Abs(_PracticeSet.MySelectedTime[nowTrial] - _PracticeSet.YourSelectedTime[nowTrial]);// / (Mydistance - Yourdistance);
+        return _succeed
+            * (10 - Mathf.Min(_PracticeSet.MyApproachedTime[nowTrial], _PracticeSet.YourApproachedTime[nowTrial]))
+            * (10 - (_PracticeSet.MyApproachedTime[nowTrial] < _PracticeSet.YourApproachedTime[nowTrial] ? _PracticeSet.YourSelectedTime[nowTrial] : _PracticeSet.MySelectedTime[nowTrial]));
     }
     public void MakeReadyHost()
     {
@@ -590,27 +598,27 @@ public class BlackJackManager : MonoBehaviour
     }
     private void RecordMaxSuitScore()
     {
-       /* int MaxScore = 0;
-        for (int i = 0; i < _cardslist.MyCardsList.Count; i++)
-        {
-            for (int j = 0; j < _cardslist.YourCardsList.Count; j++)
-            {
-                int _score = (_cardslist.MyCardsList[i].Number + _cardslist.YourCardsList[j].Number + _PracticeSet.FieldCardsPracticeList[nowTrial][0] > 21) ? 0 : _cardslist.MyCardsList[i].Number + _cardslist.YourCardsList[j].Number + _PracticeSet.FieldCardsPracticeList[nowTrial][0];
-                if (_cardslist.MyCardsList[i].suit.GetColor() == _cardslist.YourCardsList[j].suit.GetColor())
-                {
-                    if (_cardslist.MyCardsList[i].suit == _cardslist.YourCardsList[j].suit)
-                    {
-                        _score = (int)Mathf.Ceil(_score * 1.2f);
-                    }
-                    else
-                    {
-                        _score = (int)Mathf.Ceil(Score * 1.1f);
-                    }
-                }
-                if (MaxScore < _score) MaxScore = _score;
-            }
-        }
-        MaxScoreList.Add(MaxScore);*/
+        /* int MaxScore = 0;
+         for (int i = 0; i < _cardslist.MyCardsList.Count; i++)
+         {
+             for (int j = 0; j < _cardslist.YourCardsList.Count; j++)
+             {
+                 int _score = (_cardslist.MyCardsList[i].Number + _cardslist.YourCardsList[j].Number + _PracticeSet.FieldCardsPracticeList[nowTrial][0] > 21) ? 0 : _cardslist.MyCardsList[i].Number + _cardslist.YourCardsList[j].Number + _PracticeSet.FieldCardsPracticeList[nowTrial][0];
+                 if (_cardslist.MyCardsList[i].suit.GetColor() == _cardslist.YourCardsList[j].suit.GetColor())
+                 {
+                     if (_cardslist.MyCardsList[i].suit == _cardslist.YourCardsList[j].suit)
+                     {
+                         _score = (int)Mathf.Ceil(_score * 1.2f);
+                     }
+                     else
+                     {
+                         _score = (int)Mathf.Ceil(Score * 1.1f);
+                     }
+                 }
+                 if (MaxScore < _score) MaxScore = _score;
+             }
+         }
+         MaxScoreList.Add(MaxScore);*/
     }
     private int ReturnSum(List<int> _list)
     {

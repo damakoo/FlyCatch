@@ -80,10 +80,14 @@ public class CardsList : MonoBehaviour
         //MyFieldCard = myfieldcard.AddComponent<CardState>().Initialize(myfieldcard, false, 0);
         _PracticeSet.MySelectedTime = new List<float>();
         _PracticeSet.YourSelectedTime = new List<float>();
+        _PracticeSet.MyApproachedTime = new List<float>();
+        _PracticeSet.YourApproachedTime = new List<float>();
         for (int i = 0; i < _PracticeSet.NumberofSet; i++)
         {
             _PracticeSet.MySelectedTime.Add(0);
             _PracticeSet.YourSelectedTime.Add(0);
+            _PracticeSet.MyApproachedTime.Add(100);
+            _PracticeSet.YourApproachedTime.Add(100);
         }
 
         //GameObject yourfieldcard = Instantiate(CardPrefab, YourFieldCardtransform.position, Quaternion.Euler(new Vector3(0, 0, 90)), CardsListParent.transform);
@@ -95,10 +99,14 @@ public class CardsList : MonoBehaviour
     {
         _PracticeSet.MySelectedTime = new List<float>();
         _PracticeSet.YourSelectedTime = new List<float>();
+        _PracticeSet.MyApproachedTime = new List<float>();
+        _PracticeSet.YourApproachedTime = new List<float>();
         for (int i = 0; i < _PracticeSet.NumberofSet; i++)
         {
             _PracticeSet.MySelectedTime.Add(0);
             _PracticeSet.YourSelectedTime.Add(0);
+            _PracticeSet.MyApproachedTime.Add(100);
+            _PracticeSet.YourApproachedTime.Add(100);
         }
 
     }
