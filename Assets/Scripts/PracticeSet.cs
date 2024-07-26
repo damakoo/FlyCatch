@@ -140,6 +140,8 @@ public class PracticeSet : MonoBehaviourPunCallbacks
     }
     public Vector3 HostPlayerPos;
     public Vector3 ClientPlayerPos;
+    public Quaternion HostPlayerRot;
+    public Quaternion ClientPlayerRot;
     public bool HostPlayerRunning;
     public bool ClientPlayerRunning;
     public void SetHostPlayerRunning(bool _HostPlayerRunning)
@@ -163,6 +165,28 @@ public class PracticeSet : MonoBehaviourPunCallbacks
     {
         // ここでカードデータを再構築
         ClientPlayerRunning = _ClientPlayerRunning;
+    }
+    public void SetHostPlayerRot(Quaternion _hostplayerrot)
+    {
+        HostPlayerRot = _hostplayerrot;
+        _PhotonView.RPC("UpdateSetHostPlayerRot", RpcTarget.Others, _hostplayerrot.x, _hostplayerrot.y, _hostplayerrot.z, _hostplayerrot.w);
+    }
+    [PunRPC]
+    void UpdateSetHostPlayerRot(float _hostplayerrot_x, float _hostplayerrot_y, float _hostplayerrot_z, float _hostplayerrot_w)
+    {
+        // ここでカードデータを再構築
+        HostPlayerRot = new Quaternion(_hostplayerrot_x, _hostplayerrot_y, _hostplayerrot_z, _hostplayerrot_w);
+    }
+    public void SetClientPlayerRot(Quaternion _clientplayerrot)
+    {
+        ClientPlayerRot = _clientplayerrot;
+        _PhotonView.RPC("UpdateSetClientPlayerRot", RpcTarget.Others, _clientplayerrot.x, _clientplayerrot.y, _clientplayerrot.z, _clientplayerrot.w);
+    }
+    [PunRPC]
+    void UpdateSetClientPlayerRot(float _clientplayerrot_x, float _clientplayerrot_y, float _clientplayerrot_z, float _clientplayerrot_w)
+    {
+        // ここでカードデータを再構築
+        ClientPlayerRot = new Quaternion(_clientplayerrot_x, _clientplayerrot_y, _clientplayerrot_z, _clientplayerrot_w);
     }
     public void SetHostPlayerPos(float _hostplayerpos_x, float _hostplayerpos_y, float _hostplayerpos_z)
     {
@@ -477,11 +501,17 @@ public class PracticeSet : MonoBehaviourPunCallbacks
     {
         MyCards = new List<float>() { -22, 0, 16 };
         YourCards = new List<float>() { 22, 0, 16 };
-        Vector3 initialVelocity = new Vector3(Mathf.Sign(UnityEngine.Random.Range(-1f, 1f)) * UnityEngine.Random.Range(7f, 8f), UnityEngine.Random.Range(16f, 24f), UnityEngine.Random.Range(5f, 9f));
-        Vector3 initialAngularVelocity = new Vector3(0, Mathf.Sign(initialVelocity.x) * UnityEngine.Random.Range(1f, 1.5f),0);
-        List<float> landingpoint = PredictLandingPoint(new Vector3(0, 0, -10), initialVelocity, initialAngularVelocity);
+        //Vector3 initialVelocity = new Vector3(Mathf.Sign(UnityEngine.Random.Range(-1f, 1f)) * UnityEngine.Random.Range(1.2f, 3f), UnityEngine.Random.Range(16f, 24f), UnityEngine.Random.Range(5f, 9f));
+        Vector3 initialVelocity = new Vector3(Mathf.Sign(UnityEngine.Random.Range(-1f, 1f)) * UnityEngine.Random.Range(0.0f, 2.8f), UnityEngine.Random.Range(12f, 16f), UnityEngine.Random.Range(10f, 15f));
+        //Vector3 initialAngularVelocity = CalculateInitialAngularVelocity(initialVelocity);
+        //Vector3 initialAngularVelocity = (-1) * new Vector3(0, Mathf.Sign(initialVelocity.x) * GetRandomFloatValue(0.6f, 0.9f, 6.0f, 7.0f), 0);
+        Vector3 initialAngularVelocity = (-1) * new Vector3(0, Mathf.Sign(initialVelocity.x) * GetRandomFloatValue(-0.2f, 0.2f, 5f, 6f), 0);
+        //Vector3 initialAngularVelocity = new Vector3(0, 0, 0);
+        Vector3 initialPos = new Vector3((-1) * Mathf.Sign(initialVelocity.x) * UnityEngine.Random.Range(-1f, 5f), 0, -10);
+        //List<float> landingpoint = PredictLandingPoint(new Vector3(0, 0, -10), initialVelocity, initialAngularVelocity);
+        List<float> landingpoint = PredictLandingPoint(initialPos, initialVelocity, initialAngularVelocity);
         //Debug.Log(landingpoint.x);
-        FieldCards = new List<float>() { 0, 0, -10, initialVelocity.x, initialVelocity.y, initialVelocity.z, initialAngularVelocity.x, initialAngularVelocity.y, initialAngularVelocity.z, landingpoint[0], landingpoint[1], landingpoint[2], landingpoint[3] };
+        FieldCards = new List<float>() { initialPos.x, initialPos.y, initialPos.z, initialVelocity.x, initialVelocity.y, initialVelocity.z, initialAngularVelocity.x, initialAngularVelocity.y, initialAngularVelocity.z, landingpoint[0], landingpoint[1], landingpoint[2], landingpoint[3] };
         /*
         MyCards = CardPattern.MyCardPattern[_order];
         YourCards = CardPattern.YourCardPattern[_order];
@@ -489,6 +519,52 @@ public class PracticeSet : MonoBehaviourPunCallbacks
         YourCardsSuit = CardPattern.YourCardPatternSuit[_order];
         //FieldCards = CardPattern.FieldCardPattern[_order];
         FieldCardsSuit = CardPattern.FieldCardPatternSuit[_order];*/
+    }
+    float GetRandomFloatValue(float _minmin, float _minmax, float _maxmin, float _maxmax)
+    {
+        float randomValue;
+
+        // 0か1をランダムに選ぶ
+        int rangeSelector = UnityEngine.Random.Range(0, 2);
+
+        if (rangeSelector == 0)
+        {
+            // 1から2の範囲からランダムなfloat値を生成
+            randomValue = UnityEngine.Random.Range(_minmin, _minmax);
+        }
+        else
+        {
+            // 3から4の範囲からランダムなfloat値を生成
+            randomValue = UnityEngine.Random.Range(_maxmin, _maxmax);
+        }
+
+        return randomValue;
+    }
+    Vector3 CalculateInitialAngularVelocity(Vector3 velocity)
+    {
+        Vector3 angularVelocity = Vector3.zero;
+        if (velocity.x > 0)
+        {
+            // x軸の負の方向に力を加えるために必要な角速度を設定
+            angularVelocity = Vector3.up * velocity.magnitude;
+        }
+        else
+        {
+            // x軸の正の方向に力を加えるために必要な角速度を設定
+            angularVelocity = Vector3.down * velocity.magnitude;
+        }
+
+        // さらにy方向の速度に基づいて調整
+        if (velocity.y < 0)
+        {
+            angularVelocity += Vector3.right * velocity.magnitude;
+        }
+        else
+        {
+            angularVelocity += Vector3.left * velocity.magnitude;
+        }
+
+        return angularVelocity;
     }
 
 
@@ -502,7 +578,7 @@ public class PracticeSet : MonoBehaviourPunCallbacks
         float landingtime = 0;
 
         // Calculate Magnus effect
-        Vector3 magnusForce = Vector3.Cross(currentAngularVelocity, currentVelocity) * 0.1f; // 0.1f is a magnus effect coefficient
+        Vector3 magnusForce = Vector3.Cross(currentAngularVelocity, currentVelocity) * 0.05f; // 0.1f is a magnus effect coefficient
 
         // Update velocity with gravity and Magnus effect
         currentVelocity += (gravity + magnusForce) * Time.fixedDeltaTime;
@@ -512,7 +588,7 @@ public class PracticeSet : MonoBehaviourPunCallbacks
         while (currentPosition.y > 0)
         {
             // Calculate Magnus effect
-            magnusForce = Vector3.Cross(currentAngularVelocity, currentVelocity) * 0.1f; // 0.1f is a magnus effect coefficient
+            magnusForce = Vector3.Cross(currentAngularVelocity, currentVelocity) * 0.05f; // 0.1f is a magnus effect coefficient
 
             // Update velocity with gravity and Magnus effect
             currentVelocity += (gravity + magnusForce) * Time.fixedDeltaTime;

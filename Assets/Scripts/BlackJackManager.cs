@@ -53,6 +53,8 @@ public class BlackJackManager : MonoBehaviour
     Vector3 currentAngularVelocity;
     Vector3 currentVelocity;
     Vector3 magnusForce;
+    private Quaternion _defaultQuaternionHost;
+    private Quaternion _defaultQuaternionClient;
 
     public enum HostorClient
     {
@@ -81,6 +83,8 @@ public class BlackJackManager : MonoBehaviour
         ClientPlayerAnimator = ClientPlayer.GetComponent<Animator>();
         HostPlayerAnimator.applyRootMotion = false;
         ClientPlayerAnimator.applyRootMotion = false;
+        _defaultQuaternionHost = HostPlayer.transform.localRotation;
+        _defaultQuaternionClient = ClientPlayer.transform.localRotation;
     }
     private void FixedUpdate()
     {
@@ -91,10 +95,10 @@ public class BlackJackManager : MonoBehaviour
                 currentAngularVelocity = Ball_rigidbody.angularVelocity;
                 currentVelocity = Ball_rigidbody.velocity;
                 // Calculate Magnus effect
-                magnusForce = Vector3.Cross(currentAngularVelocity, currentVelocity) * 0.1f; // 0.1f is a magnus effect coefficient
+                magnusForce = Vector3.Cross(currentAngularVelocity, currentVelocity) * 0.05f; // 0.1f is a magnus effect coefficient
                 Ball_rigidbody.velocity = currentVelocity + magnusForce * Time.fixedDeltaTime;
-                Console.WriteLine(magnusForce.x);
-                Console.WriteLine(currentVelocity.x);
+                //Console.WriteLine(magnusForce.x);
+                //Console.WriteLine(currentVelocity.x);
             }
         }
     }
@@ -221,15 +225,17 @@ public class BlackJackManager : MonoBehaviour
             else if (Input.GetKeyUp(KeyCode.F))
             {
                 _PracticeSet.SetHostPlayerRunning(false);
+                _PracticeSet.SetHostPlayerRot(_defaultQuaternionHost);
             }
 
-            if (Input.GetKeyDown(KeyCode.G))
+            if (Input.GetKeyDown(KeyCode.J))
             {
                 _PracticeSet.SetClientPlayerRunning(true);
             }
-            else if (Input.GetKeyUp(KeyCode.G))
+            else if (Input.GetKeyUp(KeyCode.J))
             {
                 _PracticeSet.SetClientPlayerRunning(false);
+                _PracticeSet.SetClientPlayerRot(_defaultQuaternionClient);
             }
         }
     }
@@ -261,25 +267,47 @@ public class BlackJackManager : MonoBehaviour
     {
         distance_host = Vector3.Magnitude(fallpoint - HostPlayer.transform.position);
         distance_client = Vector3.Magnitude(fallpoint - ClientPlayer.transform.position);
+        if (distance_host <= AmountOfMove * 1.5f * 0.1f)
+        {
+            _PracticeSet.SetHostPlayerPos(fallpoint.x, fallpoint.y, fallpoint.z);
+        }
         // �}�E�X�{�^�����N���b�N���ꂽ���m�F
-        if (distance_host > AmountOfMove * 1.5f * 0.1f && Input.GetKey(KeyCode.F))
+        else if (distance_host > AmountOfMove * 1.5f * 0.1f && Input.GetKey(KeyCode.F))
         {
             _PracticeSet.SetMySelectedTime(Time.deltaTime, nowTrial);
-
-            Vector3 destination = HostPlayer.transform.position + (fallpoint - HostPlayer.transform.position) / distance_host * AmountOfMove * Time.deltaTime;
-            _PracticeSet.SetHostPlayerPos(destination.x, destination.y, destination.z);
+            if(distance_host < AmountOfMove * Time.deltaTime)
+            {
+                _PracticeSet.SetHostPlayerPos(fallpoint.x, fallpoint.y, fallpoint.z);
+            }
+            else
+            {
+                Vector3 destination = HostPlayer.transform.position + (fallpoint - HostPlayer.transform.position) / distance_host * AmountOfMove * Time.deltaTime;
+                _PracticeSet.SetHostPlayerPos(destination.x, destination.y, destination.z);
+                _PracticeSet.SetHostPlayerRot(Quaternion.LookRotation((fallpoint - HostPlayer.transform.position).normalized));
+            }
             if (distance_host - AmountOfMove * Time.deltaTime < AmountOfMove * 1.5f * 0.1f)
             {
                 _PracticeSet.SetMyApproachTime(nowTime, nowTrial);
             }
         }
 
-        if (Input.GetKey(KeyCode.J))
+        if (distance_client <= AmountOfMove * 1.5f * 0.1f)
+        {
+            _PracticeSet.SetClientPlayerPos(fallpoint.x, fallpoint.y, fallpoint.z);
+        }
+        else if (distance_client > AmountOfMove * 1.5f * 0.1f && Input.GetKey(KeyCode.J))
         {
             _PracticeSet.SetYourSelectedTime(Time.deltaTime, nowTrial);
-
-            Vector3 destination = ClientPlayer.transform.position + (fallpoint - ClientPlayer.transform.position) / distance_client * AmountOfMove * Time.deltaTime;
-            _PracticeSet.SetClientPlayerPos(destination.x, destination.y, destination.z);
+            if (distance_client < AmountOfMove * Time.deltaTime)
+            {
+                _PracticeSet.SetClientPlayerPos(fallpoint.x, fallpoint.y, fallpoint.z);
+            }
+            else
+            {
+                Vector3 destination = ClientPlayer.transform.position + (fallpoint - ClientPlayer.transform.position) / distance_client * AmountOfMove * Time.deltaTime;
+                _PracticeSet.SetClientPlayerPos(destination.x, destination.y, destination.z);
+                _PracticeSet.SetClientPlayerRot(Quaternion.LookRotation((fallpoint - ClientPlayer.transform.position).normalized));
+            }
             if (distance_client - AmountOfMove * Time.deltaTime < AmountOfMove * 1.5f * 0.1f)
             {
                 _PracticeSet.SetYourApproachTime(nowTime, nowTrial);
@@ -287,6 +315,8 @@ public class BlackJackManager : MonoBehaviour
         }
         HostPlayer.transform.position = _PracticeSet.HostPlayerPos;
         ClientPlayer.transform.position = _PracticeSet.ClientPlayerPos;
+        HostPlayer.transform.rotation = _PracticeSet.HostPlayerRot;
+        ClientPlayer.transform.rotation = _PracticeSet.ClientPlayerRot;
         HostPlayerAnimator.SetBool("Running", _PracticeSet.HostPlayerRunning);
         ClientPlayerAnimator.SetBool("Running", _PracticeSet.ClientPlayerRunning);
     }
@@ -427,6 +457,12 @@ public class BlackJackManager : MonoBehaviour
         fallpoint = new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][9], _PracticeSet.FieldCardsPracticeList[nowTrial][10], _PracticeSet.FieldCardsPracticeList[nowTrial][11]);
         _PracticeSet.SetHostPlayerPos(_PracticeSet.MyCardsPracticeList[nowTrial][0], _PracticeSet.MyCardsPracticeList[nowTrial][1], _PracticeSet.MyCardsPracticeList[nowTrial][2]);
         _PracticeSet.SetClientPlayerPos(_PracticeSet.YourCardsPracticeList[nowTrial][0], _PracticeSet.YourCardsPracticeList[nowTrial][1], _PracticeSet.YourCardsPracticeList[nowTrial][2]);
+        _PracticeSet.SetHostPlayerRot(_defaultQuaternionHost);
+        _PracticeSet.SetClientPlayerRot(_defaultQuaternionClient);
+        HostPlayer.transform.position = _PracticeSet.HostPlayerPos;
+        ClientPlayer.transform.position = _PracticeSet.ClientPlayerPos;
+        HostPlayer.transform.rotation = _PracticeSet.HostPlayerRot;
+        ClientPlayer.transform.rotation = _PracticeSet.ClientPlayerRot;
         _PracticeSet.BlackJackState = PracticeSet.BlackJackStateList.SelectCards;
         //TimeLimitObj.transform.position = TimeLimit_notBet.transform.position;
     }
@@ -522,12 +558,15 @@ public class BlackJackManager : MonoBehaviour
     private float CalculatefloatScore()
     {
         float _succeed = (distance_host < AmountOfMove * 1.5f * 0.1f || distance_client < AmountOfMove * 1.5f * 0.1f) ? 1 : 0;
-        //float Mydistance = Vector3.Magnitude(new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][0], _PracticeSet.FieldCardsPracticeList[nowTrial][1], _PracticeSet.FieldCardsPracticeList[nowTrial][2]) - new Vector3(_PracticeSet.MyCardsPracticeList[nowTrial][0], _PracticeSet.MyCardsPracticeList[nowTrial][1], _PracticeSet.MyCardsPracticeList[nowTrial][2]));
-        //float Yourdistance = Vector3.Magnitude(new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][0], _PracticeSet.FieldCardsPracticeList[nowTrial][1], _PracticeSet.FieldCardsPracticeList[nowTrial][2]) - new Vector3(_PracticeSet.YourCardsPracticeList[nowTrial][0], _PracticeSet.YourCardsPracticeList[nowTrial][1], _PracticeSet.YourCardsPracticeList[nowTrial][2]));
+        float Mydistance = Vector3.Magnitude(fallpoint - new Vector3(_PracticeSet.MyCardsPracticeList[nowTrial][0], _PracticeSet.MyCardsPracticeList[nowTrial][1], _PracticeSet.MyCardsPracticeList[nowTrial][2]));
+        float Yourdistance = Vector3.Magnitude(fallpoint - new Vector3(_PracticeSet.YourCardsPracticeList[nowTrial][0], _PracticeSet.YourCardsPracticeList[nowTrial][1], _PracticeSet.YourCardsPracticeList[nowTrial][2]));
         //return _succeed * Mathf.Abs(_PracticeSet.MySelectedTime[nowTrial] - _PracticeSet.YourSelectedTime[nowTrial]);// / (Mydistance - Yourdistance);
-        return _succeed
-            * (10 - Mathf.Min(_PracticeSet.MyApproachedTime[nowTrial], _PracticeSet.YourApproachedTime[nowTrial]))
-            * (10 - (_PracticeSet.MyApproachedTime[nowTrial] < _PracticeSet.YourApproachedTime[nowTrial] ? _PracticeSet.YourSelectedTime[nowTrial] : _PracticeSet.MySelectedTime[nowTrial]));
+        //return _succeed
+        //    * (10 - Mathf.Min(_PracticeSet.MyApproachedTime[nowTrial], _PracticeSet.YourApproachedTime[nowTrial]))
+        //    * (10 - (_PracticeSet.MyApproachedTime[nowTrial] < _PracticeSet.YourApproachedTime[nowTrial] ? _PracticeSet.YourSelectedTime[nowTrial] : _PracticeSet.MySelectedTime[nowTrial]));
+        return _succeed *
+                (50 * (Mathf.Min(Mydistance, Yourdistance) - AmountOfMove * 1.5f * 0.1f) / AmountOfMove / Mathf.Min(_PracticeSet.MyApproachedTime[nowTrial], _PracticeSet.YourApproachedTime[nowTrial])
+                 + 50 * (1 - (_PracticeSet.MyApproachedTime[nowTrial] < _PracticeSet.YourApproachedTime[nowTrial] ? _PracticeSet.YourSelectedTime[nowTrial] / (Yourdistance - AmountOfMove * 1.5f * 0.1f) * AmountOfMove : _PracticeSet.MySelectedTime[nowTrial] / (Mydistance - AmountOfMove * 1.5f * 0.1f) * AmountOfMove)));
     }
     public void MakeReadyHost()
     {
