@@ -105,6 +105,28 @@ public class PracticeSet : MonoBehaviourPunCallbacks
         // ここでカードデータを再構築
         MySelectedTime[trial] += time;
     }
+    public void FixMySelectedTime(float time, int trial)
+    {
+        MySelectedTime[trial] = time;
+        _PhotonView.RPC("UpdateFixMySelectedTimeOnAllClients", RpcTarget.Others, time, trial);
+    }
+    [PunRPC]
+    void UpdateFixMySelectedTimeOnAllClients(float time, int trial)
+    {
+        // ここでカードデータを再構築
+        MySelectedTime[trial] = time;
+    }
+    public void FixYourSelectedTime(float time, int trial)
+    {
+        YourSelectedTime[trial] = time;
+        _PhotonView.RPC("UpdateFixYourSelectedTimeOnAllClients", RpcTarget.Others, time, trial);
+    }
+    [PunRPC]
+    void UpdateFixYourSelectedTimeOnAllClients(float time, int trial)
+    {
+        // ここでカードデータを再構築
+        YourSelectedTime[trial] = time;
+    }
     public void SetYourSelectedTime(float time, int trial)
     {
         YourSelectedTime[trial] += time;
@@ -499,19 +521,32 @@ public class PracticeSet : MonoBehaviourPunCallbacks
     }
     void DecideDecidedCards(int _order)
     {
-        MyCards = new List<float>() { -22, 0, 16 };
-        YourCards = new List<float>() { 22, 0, 16 };
-        //Vector3 initialVelocity = new Vector3(Mathf.Sign(UnityEngine.Random.Range(-1f, 1f)) * UnityEngine.Random.Range(1.2f, 3f), UnityEngine.Random.Range(16f, 24f), UnityEngine.Random.Range(5f, 9f));
-        Vector3 initialVelocity = new Vector3(Mathf.Sign(UnityEngine.Random.Range(-1f, 1f)) * UnityEngine.Random.Range(0.0f, 2.8f), UnityEngine.Random.Range(12f, 16f), UnityEngine.Random.Range(10f, 15f));
+        //MyCards = new List<float>() { UnityEngine.Random.Range(15f, 25f), 0, UnityEngine.Random.Range(10f, 20f) };
+        //YourCards = new List<float>() { UnityEngine.Random.Range(-25f, -15f), 0, UnityEngine.Random.Range(10f, 20f) };
+        MyCards = new List<float>() { 30.5f, 0, -33.5f };
+        YourCards = new List<float>() { -30.5f, 0, 33.5f };
+        Vector3 fallpoint = new Vector3(UnityEngine.Random.Range(-30.5f, 30.5f), 0f, UnityEngine.Random.Range(-33.5f, 33.5f));
+        Vector3 launchpoint = new Vector3(UnityEngine.Random.Range(-30.5f, 30.5f), UnityEngine.Random.Range(20f, 25f), UnityEngine.Random.Range(-97.5f, -50.5f));
+        float Mydistance = Vector3.Magnitude(fallpoint - new Vector3(MyCards[0], MyCards[1], MyCards[2]));
+        float Yourdistance = Vector3.Magnitude(fallpoint - new Vector3(YourCards[0], YourCards[1], YourCards[2]));
+        float landingtime = Mathf.Min((Mydistance - _BlackJackManager.LeftAmountOfMove * 1.5f * 0.1f) / _BlackJackManager.LeftAmountOfMove, (Yourdistance - _BlackJackManager.RightAmountOfMove * 1.5f * 0.1f) / _BlackJackManager.RightAmountOfMove) + _BlackJackManager.FlyAffordTime;
+        //float landingtime = _BlackJackManager.FlyAffordTime;
+        Vector3 initialVelocity = GetInitialVelocityfromfallpoint(fallpoint, launchpoint, landingtime);
+
+        //Vector3 initialVelocity = new Vector3(Mathf.Sign(UnityEngine.Random.Range(-1f, 1f)) * GetRandomFloatValue(0,1,8,10), -UnityEngine.Random.Range(12f, 17f), UnityEngine.Random.Range(27f, 30f));
+        //Vector3 initialVelocity = new Vector3(Mathf.Sign(UnityEngine.Random.Range(-1f, 1f)) * UnityEngine.Random.Range(0.0f, 4f), UnityEngine.Random.Range(18f, 20f), UnityEngine.Random.Range(10f, 15f));
         //Vector3 initialAngularVelocity = CalculateInitialAngularVelocity(initialVelocity);
-        //Vector3 initialAngularVelocity = (-1) * new Vector3(0, Mathf.Sign(initialVelocity.x) * GetRandomFloatValue(0.6f, 0.9f, 6.0f, 7.0f), 0);
-        Vector3 initialAngularVelocity = (-1) * new Vector3(0, Mathf.Sign(initialVelocity.x) * GetRandomFloatValue(-0.2f, 0.2f, 5f, 6f), 0);
+        //Vector3 initialAngularVelocity = (-1) * new Vector3(0, Mathf.Sign(initialVelocity.x) * GetRandomFloatValue(-0.2f, 0.5f, 1.5f, 1.8f), 0);
+        //Vector3 initialAngularVelocity = (-1) * new Vector3(0, Mathf.Sign(initialVelocity.x) * GetRandomFloatValue(-200f, 200f, 3000f, 3500f), 0);
+        Vector3 initialAngularVelocity = Vector3.zero;
         //Vector3 initialAngularVelocity = new Vector3(0, 0, 0);
-        Vector3 initialPos = new Vector3((-1) * Mathf.Sign(initialVelocity.x) * UnityEngine.Random.Range(-1f, 5f), 0, -10);
+        //Vector3 initialPos = new Vector3((-1) * Mathf.Sign(initialVelocity.x) * UnityEngine.Random.Range(-1f, 3f), 0, -10);
+        //Vector3 initialPos = new Vector3((-1) * Mathf.Sign(initialVelocity.x) * UnityEngine.Random.Range(-1f, 5f), 18, -10);
         //List<float> landingpoint = PredictLandingPoint(new Vector3(0, 0, -10), initialVelocity, initialAngularVelocity);
-        List<float> landingpoint = PredictLandingPoint(initialPos, initialVelocity, initialAngularVelocity);
+        //List<float> landingpoint = PredictLandingPoint(initialPos, initialVelocity, initialAngularVelocity);
         //Debug.Log(landingpoint.x);
-        FieldCards = new List<float>() { initialPos.x, initialPos.y, initialPos.z, initialVelocity.x, initialVelocity.y, initialVelocity.z, initialAngularVelocity.x, initialAngularVelocity.y, initialAngularVelocity.z, landingpoint[0], landingpoint[1], landingpoint[2], landingpoint[3] };
+        //FieldCards = new List<float>() { initialPos.x, initialPos.y, initialPos.z, initialVelocity.x, initialVelocity.y, initialVelocity.z, initialAngularVelocity.x, initialAngularVelocity.y, initialAngularVelocity.z, landingpoint[0], landingpoint[1], landingpoint[2], landingpoint[3] };
+        FieldCards = new List<float>() { launchpoint.x, launchpoint.y, launchpoint.z, initialVelocity.x, initialVelocity.y, initialVelocity.z, initialAngularVelocity.x, initialAngularVelocity.y, initialAngularVelocity.z, fallpoint.x, fallpoint.y, fallpoint.z, landingtime };
         /*
         MyCards = CardPattern.MyCardPattern[_order];
         YourCards = CardPattern.YourCardPattern[_order];
@@ -519,6 +554,28 @@ public class PracticeSet : MonoBehaviourPunCallbacks
         YourCardsSuit = CardPattern.YourCardPatternSuit[_order];
         //FieldCards = CardPattern.FieldCardPattern[_order];
         FieldCardsSuit = CardPattern.FieldCardPatternSuit[_order];*/
+    }
+    Vector3 GetInitialVelocityfromfallpoint(Vector3 _fallpoint, Vector3 _launchpoint, float _landingtime)
+    {
+
+        // 重力加速度（単位：m/s^2）
+        float gravity = Physics.gravity.y;
+
+        // 水平方向（XZ平面）の距離
+        Vector3 horizontalDistance = new Vector3(_fallpoint.x - _launchpoint.x, 0, _fallpoint.z - _launchpoint.z);
+
+        // 水平方向の初期速度
+        Vector3 horizontalVelocity = horizontalDistance / _landingtime;
+
+        // Y方向（垂直方向）の初期速度を計算する
+        float verticalDistance = _fallpoint.y - _launchpoint.y;
+
+        // 垂直方向の運動方程式を使って初期速度を計算（v0 = (y - 1/2 * g * t^2) / t）
+        float verticalVelocity = (verticalDistance - 0.5f * gravity * Mathf.Pow(_landingtime, 2)) / _landingtime;
+
+        // 最終的な初期速度ベクトル
+        return new Vector3(horizontalVelocity.x, verticalVelocity, horizontalVelocity.z);
+
     }
     float GetRandomFloatValue(float _minmin, float _minmax, float _maxmin, float _maxmax)
     {
@@ -578,7 +635,7 @@ public class PracticeSet : MonoBehaviourPunCallbacks
         float landingtime = 0;
 
         // Calculate Magnus effect
-        Vector3 magnusForce = Vector3.Cross(currentAngularVelocity, currentVelocity) * 0.05f; // 0.1f is a magnus effect coefficient
+        Vector3 magnusForce = Vector3.Cross(currentAngularVelocity, currentVelocity) * 0.1f; // 0.1f is a magnus effect coefficient
 
         // Update velocity with gravity and Magnus effect
         currentVelocity += (gravity + magnusForce) * Time.fixedDeltaTime;
@@ -588,7 +645,7 @@ public class PracticeSet : MonoBehaviourPunCallbacks
         while (currentPosition.y > 0)
         {
             // Calculate Magnus effect
-            magnusForce = Vector3.Cross(currentAngularVelocity, currentVelocity) * 0.05f; // 0.1f is a magnus effect coefficient
+            magnusForce = Vector3.Cross(currentAngularVelocity, currentVelocity) * 0.1f; // 0.1f is a magnus effect coefficient
 
             // Update velocity with gravity and Magnus effect
             currentVelocity += (gravity + magnusForce) * Time.fixedDeltaTime;
@@ -844,6 +901,17 @@ public class PracticeSet : MonoBehaviourPunCallbacks
     {
         // ここでカードデータを再構築
         _BlackJackManager.GameStartUI();
+    }
+    public void SetCharacterPos()
+    {
+        _BlackJackManager.SetCharacterPos();
+        _PhotonView.RPC("RPCSetCharacterPos", RpcTarget.Others);
+    }
+    [PunRPC]
+    void RPCSetCharacterPos()
+    {
+        // ここでカードデータを再構築
+        _BlackJackManager.SetCharacterPos();
     }
     List<int> GenerateRandomList(int min, int max)
     {
