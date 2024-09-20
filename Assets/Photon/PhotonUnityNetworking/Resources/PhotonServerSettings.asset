@@ -77,6 +77,8 @@ MonoBehaviour:
   - RPCSetCharacterPos
   - UpdateFixMySelectedTimeOnAllClients
   - UpdateFixYourSelectedTimeOnAllClients
+  - UpdateMyApproachedRateOnAllClients
+  - UpdateYourApproachedRateOnAllClients
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

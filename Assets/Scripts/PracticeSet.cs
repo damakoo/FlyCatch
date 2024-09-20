@@ -16,11 +16,33 @@ public class PracticeSet : MonoBehaviourPunCallbacks
     public List<float> YourSelectedTime { get; set; }
     public List<float> MyApproachedTime { get; set; }
     public List<float> YourApproachedTime { get; set; }
+    public List<float> MyApproachedRate { get; set; }
+    public List<float> YourApproachedRate { get; set; }
     public int MySelectedBet { get; set; }
     public int YourSelectedBet { get; set; }
     public float TimeLeft { get; set; } = 0;
     public bool HostPressed { get; set; } = false;
     public bool ClientPressed { get; set; } = false;
+    public void SetMyApproachRate(float _myapproachRate, int trial)
+    {
+        MyApproachedRate[trial] = _myapproachRate;
+        _PhotonView.RPC("UpdateMyApproachedRateOnAllClients", RpcTarget.Others, _myapproachRate, trial);
+    }
+    [PunRPC]
+    void UpdateMyApproachedRateOnAllClients(float _myapproachRate, int trial)
+    {
+        MyApproachedRate[trial] = _myapproachRate;
+    }
+    public void SetYourApproachRate(float _yourapproachRate, int trial)
+    {
+        YourApproachedRate[trial] = _yourapproachRate;
+        _PhotonView.RPC("UpdateYourApproachedRateOnAllClients", RpcTarget.Others, _yourapproachRate, trial);
+    }
+    [PunRPC]
+    void UpdateYourApproachedRateOnAllClients(float _yourapproachRate, int trial)
+    {
+        YourApproachedRate[trial] = _yourapproachRate;
+    }
     public void SetMyApproachTime(float _myapproachtime, int trial)
     {
         MyApproachedTime[trial] = _myapproachtime;

@@ -566,6 +566,7 @@ public class BlackJackManager : MonoBehaviour
         //Ball.transform.position = Vector3.one;
         //Debug.Log(Ball.transform.position.x);
         Score = CalculateResult();
+        SetApproachRate();
         if (Score == 1) Ball_mesh.enabled = false;
         floatScore = CalculatefloatScore_0805();
         //_blackJackRecorder.RecordResult((_PracticeSet.MySelectedCard == NOTSELCETEDNUMBER) ? 0 : _cardslist.MyCardsList[_PracticeSet.MySelectedCard].Number, (_PracticeSet.YourSelectedCard == NOTSELCETEDNUMBER) ? 0 : _cardslist.YourCardsList[_PracticeSet.YourSelectedCard].Number, (useSuit) ? CalculateSuitScore() : Score, _PracticeSet.MySelectedBet, _PracticeSet.YourSelectedBet);
@@ -681,6 +682,11 @@ public class BlackJackManager : MonoBehaviour
                     (50 * Mathf.Min((Mydistance - LeftAmountOfMove * 1.5f * 0.1f) / LeftAmountOfMove + LeftDelayTime, (Yourdistance - RightAmountOfMove * 1.5f * 0.1f) / RightAmountOfMove + RightDelayTime) / (Mathf.Min(_PracticeSet.MyApproachedTime[nowTrial], _PracticeSet.YourApproachedTime[nowTrial]))
                      + 50 * Mathf.Min(Mydistance - LeftAmountOfMove * 1.5f * 0.1f, Yourdistance - RightAmountOfMove * 1.5f * 0.1f) / (_PracticeSet.MySelectedTime[nowTrial] * LeftAmountOfMove + _PracticeSet.YourSelectedTime[nowTrial] * RightAmountOfMove)),
                 100) : 0;*/
+    }
+    private void SetApproachRate()
+    {
+        _PracticeSet.SetMyApproachRate(_PracticeSet.MySelectedTime[nowTrial] * LeftAmountOfMove / Vector3.Magnitude(fallpoint - new Vector3(_PracticeSet.MyCardsPracticeList[nowTrial][0], _PracticeSet.MyCardsPracticeList[nowTrial][1], _PracticeSet.MyCardsPracticeList[nowTrial][2])), nowTrial);
+        _PracticeSet.SetYourApproachRate(_PracticeSet.YourSelectedTime[nowTrial] * RightAmountOfMove / Vector3.Magnitude(fallpoint - new Vector3(_PracticeSet.YourCardsPracticeList[nowTrial][0], _PracticeSet.YourCardsPracticeList[nowTrial][1], _PracticeSet.YourCardsPracticeList[nowTrial][2])), nowTrial);
     }
     private float CalculatefloatScorefromDistance()
     {

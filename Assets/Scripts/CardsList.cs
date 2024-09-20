@@ -82,12 +82,16 @@ public class CardsList : MonoBehaviour
         _PracticeSet.YourSelectedTime = new List<float>();
         _PracticeSet.MyApproachedTime = new List<float>();
         _PracticeSet.YourApproachedTime = new List<float>();
+        _PracticeSet.MyApproachedRate = new List<float>();
+        _PracticeSet.YourApproachedRate = new List<float>();
         for (int i = 0; i < _PracticeSet.NumberofSet; i++)
         {
             _PracticeSet.MySelectedTime.Add(0);
             _PracticeSet.YourSelectedTime.Add(0);
             _PracticeSet.MyApproachedTime.Add(100);
             _PracticeSet.YourApproachedTime.Add(100);
+            _PracticeSet.MyApproachedRate.Add(0);
+            _PracticeSet.YourApproachedRate.Add(0);
         }
 
         //GameObject yourfieldcard = Instantiate(CardPrefab, YourFieldCardtransform.position, Quaternion.Euler(new Vector3(0, 0, 90)), CardsListParent.transform);
@@ -101,12 +105,16 @@ public class CardsList : MonoBehaviour
         _PracticeSet.YourSelectedTime = new List<float>();
         _PracticeSet.MyApproachedTime = new List<float>();
         _PracticeSet.YourApproachedTime = new List<float>();
+        _PracticeSet.MyApproachedRate = new List<float>();
+        _PracticeSet.YourApproachedRate = new List<float>();
         for (int i = 0; i < _PracticeSet.NumberofSet; i++)
         {
             _PracticeSet.MySelectedTime.Add(0);
             _PracticeSet.YourSelectedTime.Add(0);
             _PracticeSet.MyApproachedTime.Add(100);
             _PracticeSet.YourApproachedTime.Add(100);
+            _PracticeSet.MyApproachedRate.Add(0);
+            _PracticeSet.YourApproachedRate.Add(0);
         }
 
     }
