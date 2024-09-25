@@ -545,10 +545,10 @@ public class PracticeSet : MonoBehaviourPunCallbacks
     {
         //MyCards = new List<float>() { UnityEngine.Random.Range(15f, 25f), 0, UnityEngine.Random.Range(10f, 20f) };
         //YourCards = new List<float>() { UnityEngine.Random.Range(-25f, -15f), 0, UnityEngine.Random.Range(10f, 20f) };
-        MyCards = new List<float>() { 30.5f, 0, -33.5f };
-        YourCards = new List<float>() { -30.5f, 0, 33.5f };
-        Vector3 fallpoint = new Vector3(UnityEngine.Random.Range(-30.5f, 30.5f), 0f, UnityEngine.Random.Range(-33.5f, 33.5f));
-        Vector3 launchpoint = new Vector3(UnityEngine.Random.Range(-30.5f, 30.5f), UnityEngine.Random.Range(20f, 25f), UnityEngine.Random.Range(-97.5f, -50.5f));
+        MyCards = new List<float>() { 3.05f, 0, -3.35f };
+        YourCards = new List<float>() { -3.05f, 0, 3.35f };
+        Vector3 fallpoint = new Vector3(UnityEngine.Random.Range(-3.05f, 3.05f), 0f, UnityEngine.Random.Range(-3.35f, 3.35f));
+        Vector3 launchpoint = new Vector3(UnityEngine.Random.Range(-3.05f, 3.05f), UnityEngine.Random.Range(2.0f, 2.5f), UnityEngine.Random.Range(-9.75f, -7.05f));
         float Mydistance = Vector3.Magnitude(fallpoint - new Vector3(MyCards[0], MyCards[1], MyCards[2]));
         float Yourdistance = Vector3.Magnitude(fallpoint - new Vector3(YourCards[0], YourCards[1], YourCards[2]));
         float landingtime = Mathf.Min((Mydistance - _BlackJackManager.LeftAmountOfMove * 1.5f * 0.1f) / _BlackJackManager.LeftAmountOfMove, (Yourdistance - _BlackJackManager.RightAmountOfMove * 1.5f * 0.1f) / _BlackJackManager.RightAmountOfMove) + _BlackJackManager.FlyAffordTime;

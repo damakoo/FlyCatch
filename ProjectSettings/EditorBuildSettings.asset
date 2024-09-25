@@ -5,7 +5,16 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/FlyCatch.unity
     guid: a185e46f0d0c943418cd74dae85672b9
+  - enabled: 0
+    path: Assets/Scenes/kage.unity
+    guid: fa55033ef25e68649a11ded43f0c8b32
+  - enabled: 0
+    path: Assets/Scenes/New Scene.unity
+    guid: 6c4e36013b9473a42bd53c93000f46ad
+  - enabled: 1
+    path: Assets/Scenes/FlyCatch_smallworld.unity
+    guid: 8d58a021a8cb8f14db28dc6b5200d1c3
   m_configObjects: {}

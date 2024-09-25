@@ -809,6 +809,9 @@ public class BlackJackManager : MonoBehaviour
         _PracticeSet.SetClientPressed(false);
         ReUpdateParameter();
         _PracticeSet.Restart();
+        PhotonMoveToWaitForNextTrial(nowTrial);
+        _PracticeSet.SetHostPressed(false);
+        _PracticeSet.SetClientPressed(false);
     }
     public void Restart()
     {
@@ -825,7 +828,7 @@ public class BlackJackManager : MonoBehaviour
         _blackJackRecorder.Initialize();
         _PracticeSet.BlackJackState = PracticeSet.BlackJackStateList.BeforeStart;
         MyScoreUI.text = "";
-        PhotonGameStartUI();
+        //PhotonGameStartUI();
     }
     public void PressedReload()
     {
