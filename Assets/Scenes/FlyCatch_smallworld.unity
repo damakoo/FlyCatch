@@ -4080,7 +4080,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!23 &1346077620
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -6753,7 +6753,7 @@ MonoBehaviour:
   ResultsTime: 6
   WaitingTime: 4
   BetTime: 0
-  NumberofSet: 5
+  NumberofSet: 10
   FinishUI: {fileID: 1063908797}
   _blackJackRecorder: {fileID: 482464996}
   MyScoreUI: {fileID: 1518576809}
