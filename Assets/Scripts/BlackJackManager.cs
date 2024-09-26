@@ -170,7 +170,7 @@ public class BlackJackManager : MonoBehaviour
                     nowTime += Time.deltaTime;
                     _PracticeSet.SetTimeLeft(TimeLimit - nowTime);
                     if (nowTime > 0.15f) BlackJacking();
-                    if (nowTime > _PracticeSet.FieldCardsPracticeList[nowTrial][12] + Time.fixedDeltaTime) PhotonMoveToSelectBet();
+                    if (nowTime > _PracticeSet.FieldCardsPracticeList[nowTrial][12]) PhotonMoveToSelectBet();
                 }
                 else if (_PracticeSet.BlackJackState == PracticeSet.BlackJackStateList.SelectBet)
                 {
@@ -599,21 +599,13 @@ public class BlackJackManager : MonoBehaviour
         //    + "\n Right Pressed:" + _PracticeSet.YourSelectedTime[nowTrial].ToString("F1") + "s," + "Approached:" + (_PracticeSet.YourApproachedTime[nowTrial] < 90 ? _PracticeSet.YourApproachedTime[nowTrial].ToString("F1") : "NaN") + "s";
         ScoreList.Add(_PracticeSet.Score);
         floatScoreList.Add(_PracticeSet.floatScore);
-        if (useSuit)
-        {
-            RecordMaxSuitScore();
-        }
-        else
-        {
-            RecordMaxScore();
-        }
         //YourScoreUI.text = Score.ToString();
         nowTime = 0;
         nowTrial += 1;
         if (nowTrial == _PracticeSet.TrialAll)
         {
             _PracticeSet.BlackJackState = PracticeSet.BlackJackStateList.Finished;
-            FinishUI.text = "Finished! \n ScoreAll:" + ReturnSum(ScoreList).ToString() + "/" + ReturnSum(MaxScoreList).ToString() + "\n" + "Trial: " + _blackJackRecorder.Trial.ToString() + "/" + NumberofSet.ToString();
+            //FinishUI.text = "Finished! \n ScoreAll:" + ReturnSum(ScoreList).ToString() + "/" + ReturnSum(MaxScoreList).ToString() + "\n" + "Trial: " + _blackJackRecorder.Trial.ToString() + "/" + NumberofSet.ToString();
             //_blackJackRecorder.WriteResult();
             _blackJackRecorder.ExportCsv();
             if (_blackJackRecorder.Trial == NumberofSet)
@@ -650,10 +642,10 @@ public class BlackJackManager : MonoBehaviour
     }
     public void PhotonMoveToShowResult()
     {
+        SetApproachRate();
         _PracticeSet.SetfloatScore(CalculatefloatScore_0805());
         _PracticeSet.SetScore(CalculateResult());
         _PracticeSet.MoveToShowResult();
-        SetApproachRate();
         PhotonChangeFallenAreaColor(false);
 
     }
@@ -714,6 +706,7 @@ public class BlackJackManager : MonoBehaviour
     }
     private void SetApproachRate()
     {
+        Console.WriteLine(_PracticeSet.YourSelectedTime[nowTrial] * RightAmountOfMove / Vector3.Magnitude(fallpoint - new Vector3(_PracticeSet.YourCardsPracticeList[nowTrial][0], _PracticeSet.YourCardsPracticeList[nowTrial][1], _PracticeSet.YourCardsPracticeList[nowTrial][2])));
         _PracticeSet.SetMyApproachRate(_PracticeSet.MySelectedTime[nowTrial] * LeftAmountOfMove / Vector3.Magnitude(fallpoint - new Vector3(_PracticeSet.MyCardsPracticeList[nowTrial][0], _PracticeSet.MyCardsPracticeList[nowTrial][1], _PracticeSet.MyCardsPracticeList[nowTrial][2])), nowTrial);
         _PracticeSet.SetYourApproachRate(_PracticeSet.YourSelectedTime[nowTrial] * RightAmountOfMove / Vector3.Magnitude(fallpoint - new Vector3(_PracticeSet.YourCardsPracticeList[nowTrial][0], _PracticeSet.YourCardsPracticeList[nowTrial][1], _PracticeSet.YourCardsPracticeList[nowTrial][2])), nowTrial);
     }
