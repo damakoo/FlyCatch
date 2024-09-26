@@ -378,6 +378,7 @@ public class BlackJackManager : MonoBehaviour
     {
         if (_PracticeSet.BlackJackState == PracticeSet.BlackJackStateList.SelectCards)
         {
+            distance_host = Vector3.Magnitude(fallpoint - HostPlayer.transform.position);
             _PracticeSet.SetMySelectedTime(Time.deltaTime, nowTrial);
             if (distance_host < LeftAmountOfMove * Time.deltaTime)
             {
@@ -400,7 +401,7 @@ public class BlackJackManager : MonoBehaviour
     {
         if (_PracticeSet.BlackJackState == PracticeSet.BlackJackStateList.SelectCards)
         {
-
+            distance_client = Vector3.Magnitude(fallpoint - ClientPlayer.transform.position);
             _PracticeSet.SetYourSelectedTime(Time.deltaTime, nowTrial);
             if (distance_client < RightAmountOfMove * Time.deltaTime)
             {

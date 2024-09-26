@@ -574,7 +574,8 @@ public class PracticeSet : MonoBehaviourPunCallbacks
         Vector3 launchpoint = new Vector3(UnityEngine.Random.Range(-3.05f, 3.05f), UnityEngine.Random.Range(2.0f, 2.5f), UnityEngine.Random.Range(-9.75f, -7.05f));
         float Mydistance = Vector3.Magnitude(fallpoint - new Vector3(MyCards[0], MyCards[1], MyCards[2]));
         float Yourdistance = Vector3.Magnitude(fallpoint - new Vector3(YourCards[0], YourCards[1], YourCards[2]));
-        float landingtime = Mathf.Min((Mydistance - _BlackJackManager.LeftAmountOfMove * 1.5f * 0.1f) / _BlackJackManager.LeftAmountOfMove, (Yourdistance - _BlackJackManager.RightAmountOfMove * 1.5f * 0.1f) / _BlackJackManager.RightAmountOfMove) + UnityEngine.Random.Range(_BlackJackManager.FlyAffordTime - 0.1f, _BlackJackManager.FlyAffordTime+0.1f);
+        //float landingtime = Mathf.Min((Mydistance - _BlackJackManager.LeftAmountOfMove * 1.5f * 0.1f) / _BlackJackManager.LeftAmountOfMove, (Yourdistance - _BlackJackManager.RightAmountOfMove * 1.5f * 0.1f) / _BlackJackManager.RightAmountOfMove) + UnityEngine.Random.Range(_BlackJackManager.FlyAffordTime - 0.1f, _BlackJackManager.FlyAffordTime + 0.1f);
+        float landingtime = _BlackJackManager.FlyAffordTime; //UnityEngine.Random.Range(_BlackJackManager.FlyAffordTime - 0.1f, _BlackJackManager.FlyAffordTime + 0.1f);
         //float landingtime = _BlackJackManager.FlyAffordTime;
         Vector3 initialVelocity = GetInitialVelocityfromfallpoint(fallpoint, launchpoint, landingtime);
 

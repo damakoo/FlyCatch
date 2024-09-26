@@ -6753,7 +6753,7 @@ MonoBehaviour:
   ResultsTime: 6
   WaitingTime: 4
   BetTime: 0
-  NumberofSet: 10
+  NumberofSet: 5
   FinishUI: {fileID: 1063908797}
   _blackJackRecorder: {fileID: 482464996}
   MyScoreUI: {fileID: 1518576809}
@@ -6786,7 +6786,7 @@ MonoBehaviour:
   ClientPlayer: {fileID: 216892841}
   RightAmountOfMove: 6.72
   LeftAmountOfMove: 5.6
-  FlyAffordTime: 0.8
+  FlyAffordTime: 1.8
   RightDelayTime: 0
   LeftDelayTime: 0
   _HowShowCard: 1
