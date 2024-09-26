@@ -79,6 +79,8 @@ MonoBehaviour:
   - UpdateFixYourSelectedTimeOnAllClients
   - UpdateMyApproachedRateOnAllClients
   - UpdateYourApproachedRateOnAllClients
+  - RPCChangeFallenAreaColor
+  - RPCChangeFallenAreaPos
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

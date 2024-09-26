@@ -551,7 +551,7 @@ public class PracticeSet : MonoBehaviourPunCallbacks
         Vector3 launchpoint = new Vector3(UnityEngine.Random.Range(-3.05f, 3.05f), UnityEngine.Random.Range(2.0f, 2.5f), UnityEngine.Random.Range(-9.75f, -7.05f));
         float Mydistance = Vector3.Magnitude(fallpoint - new Vector3(MyCards[0], MyCards[1], MyCards[2]));
         float Yourdistance = Vector3.Magnitude(fallpoint - new Vector3(YourCards[0], YourCards[1], YourCards[2]));
-        float landingtime = Mathf.Min((Mydistance - _BlackJackManager.LeftAmountOfMove * 1.5f * 0.1f) / _BlackJackManager.LeftAmountOfMove, (Yourdistance - _BlackJackManager.RightAmountOfMove * 1.5f * 0.1f) / _BlackJackManager.RightAmountOfMove) + _BlackJackManager.FlyAffordTime;
+        float landingtime = Mathf.Min((Mydistance - _BlackJackManager.LeftAmountOfMove * 1.5f * 0.1f) / _BlackJackManager.LeftAmountOfMove, (Yourdistance - _BlackJackManager.RightAmountOfMove * 1.5f * 0.1f) / _BlackJackManager.RightAmountOfMove) + UnityEngine.Random.Range(_BlackJackManager.FlyAffordTime - 0.1f, _BlackJackManager.FlyAffordTime+0.1f);
         //float landingtime = _BlackJackManager.FlyAffordTime;
         Vector3 initialVelocity = GetInitialVelocityfromfallpoint(fallpoint, launchpoint, landingtime);
 
@@ -857,6 +857,28 @@ public class PracticeSet : MonoBehaviourPunCallbacks
     {
         // ここでカードデータを再構築
         _BlackJackManager.MoveToSelectCards();
+    }
+    public void ChangeFallenAreaColor(bool changeRed)
+    {
+        _BlackJackManager.ChangeFallenAreaColor(changeRed);
+        _PhotonView.RPC("RPCChangeFallenAreaColor", RpcTarget.Others, changeRed);
+    }
+    [PunRPC]
+    void RPCChangeFallenAreaColor(bool changeRed)
+    {
+        // ここでカードデータを再構築
+        _BlackJackManager.ChangeFallenAreaColor(changeRed);
+    }
+    public void ChangeFallenAreaPos(float _x, float _y, float _z)
+    {
+        _BlackJackManager.ChangeFallenAreaPos(_x, _y, _z);
+        _PhotonView.RPC("RPCChangeFallenAreaPos", RpcTarget.Others, _x, _y, _z);
+    }
+    [PunRPC]
+    void RPCChangeFallenAreaPos(float _x, float _y, float _z)
+    {
+        // ここでカードデータを再構築
+        _BlackJackManager.ChangeFallenAreaPos(_x, _y, _z);
     }
     public void MoveToSelectBet()
     {

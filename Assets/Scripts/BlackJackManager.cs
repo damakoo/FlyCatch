@@ -34,6 +34,8 @@ public class BlackJackManager : MonoBehaviour
     [SerializeField] GameObject AllTrialFinishedUI;
     [SerializeField] TextMeshProUGUI TimeLimitObj_str;
     [SerializeField] GameObject Ball;
+    [SerializeField] GameObject FallenArea;
+    private Material FallenAreaMaterial;
     public Rigidbody Ball_rigidbody;
     private MeshRenderer Ball_mesh;
     [SerializeField] GameObject HostPlayer;
@@ -90,6 +92,7 @@ public class BlackJackManager : MonoBehaviour
         ClientPlayerAnimator.applyRootMotion = false;
         _defaultQuaternionHost = HostPlayer.transform.localRotation;
         _defaultQuaternionClient = ClientPlayer.transform.localRotation;
+        FallenAreaMaterial = FallenArea.GetComponent<Renderer>().material;
     }
     private void FixedUpdate()
     {
@@ -275,7 +278,31 @@ public class BlackJackManager : MonoBehaviour
         _cardslist.SetPracticeSet(_practiceset);
         hasPracticeSet = true;
     }
-
+    void PhotonChangeFallenAreaColor(bool changeRed)
+    {
+        _PracticeSet.ChangeFallenAreaColor(changeRed);
+    }
+    public void ChangeFallenAreaColor(bool changeRed)
+    {
+        if (changeRed)
+        {
+            // 現在が赤なら透明に変更
+            FallenAreaMaterial.color = new Color(0f, 0f, 0f, 0.8f); 
+        }
+        else
+        {
+            // 現在が透明なら赤に変更
+            FallenAreaMaterial.color = new Color(0f, 0f, 0f, 0f);
+        }
+    }
+    void PhotonChangeFallenAreaPos(float _x, float _y, float _z)
+    {
+        _PracticeSet.ChangeFallenAreaPos(_x, _y, _z);
+    }
+    public void ChangeFallenAreaPos(float _x, float _y, float _z)
+    {
+        FallenArea.transform.position = new Vector3(_x, _y, _z);
+    }
 
     public void UpdateParameter()
     {
@@ -544,6 +571,7 @@ public class BlackJackManager : MonoBehaviour
     public void PhotonMoveToSelectCards()
     {
         _PracticeSet.MoveToSelectCards();
+        PhotonChangeFallenAreaColor(true);
     }
     public void MoveToShowResult()
     {
@@ -623,10 +651,13 @@ public class BlackJackManager : MonoBehaviour
         _PracticeSet.SetHostPlayerRot(_defaultQuaternionHost);
         _PracticeSet.SetClientPlayerRot(_defaultQuaternionClient);
         _PracticeSet.SetCharacterPos();
+        PhotonChangeFallenAreaPos(_PracticeSet.FieldCardsPracticeList[nowTrial][9], _PracticeSet.FieldCardsPracticeList[nowTrial][10], _PracticeSet.FieldCardsPracticeList[nowTrial][11]);
     }
     public void PhotonMoveToShowResult()
     {
         _PracticeSet.MoveToShowResult();
+        PhotonChangeFallenAreaColor(false);
+
     }
     public void MoveToWaitForNextTrial(int _nowTrial)
     {
