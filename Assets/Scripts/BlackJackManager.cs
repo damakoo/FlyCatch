@@ -76,8 +76,6 @@ public class BlackJackManager : MonoBehaviour
     [SerializeField] HowShowCard _HowShowCard;
     int nowTrial = 0;
     float nowTime = 0;
-    private int Score = 0;
-    private float floatScore = 0;
     public bool hasPracticeSet { get; set; } = false;
     // Start is called before the first frame update
     void Start()
@@ -593,17 +591,14 @@ public class BlackJackManager : MonoBehaviour
         //Ball_rigidbody.angularVelocity = Vector3.zero;
         //Ball.transform.position = Vector3.one;
         //Debug.Log(Ball.transform.position.x);
-        Score = CalculateResult();
-        SetApproachRate();
-        if (Score == 1) Ball_mesh.enabled = false;
-        floatScore = CalculatefloatScore_0805();
+        if (_PracticeSet.Score == 1) Ball_mesh.enabled = false;
         //_blackJackRecorder.RecordResult((_PracticeSet.MySelectedCard == NOTSELCETEDNUMBER) ? 0 : _cardslist.MyCardsList[_PracticeSet.MySelectedCard].Number, (_PracticeSet.YourSelectedCard == NOTSELCETEDNUMBER) ? 0 : _cardslist.YourCardsList[_PracticeSet.YourSelectedCard].Number, (useSuit) ? CalculateSuitScore() : Score, _PracticeSet.MySelectedBet, _PracticeSet.YourSelectedBet);
         _PracticeSet.BlackJackState = PracticeSet.BlackJackStateList.ShowResult;
-        MyScoreUI.text = (Score == 1 ? "Succeed!" : "Failed!") + "Score:" + (floatScore * 1).ToString("F1");
+        MyScoreUI.text = (_PracticeSet.Score == 1 ? "Succeed!" : "Failed!") + "Score:" + (_PracticeSet.floatScore * 1).ToString("F1");
         //    + "\n Left Pressed:" + _PracticeSet.MySelectedTime[nowTrial].ToString("F1") + "s," + "Approached:" + (_PracticeSet.MyApproachedTime[nowTrial] < 90 ? _PracticeSet.MyApproachedTime[nowTrial].ToString("F1") : "NaN") + "s"
         //    + "\n Right Pressed:" + _PracticeSet.YourSelectedTime[nowTrial].ToString("F1") + "s," + "Approached:" + (_PracticeSet.YourApproachedTime[nowTrial] < 90 ? _PracticeSet.YourApproachedTime[nowTrial].ToString("F1") : "NaN") + "s";
-        ScoreList.Add(Score);
-        floatScoreList.Add(floatScore);
+        ScoreList.Add(_PracticeSet.Score);
+        floatScoreList.Add(_PracticeSet.floatScore);
         if (useSuit)
         {
             RecordMaxSuitScore();
@@ -655,7 +650,10 @@ public class BlackJackManager : MonoBehaviour
     }
     public void PhotonMoveToShowResult()
     {
+        _PracticeSet.SetfloatScore(CalculatefloatScore_0805());
+        _PracticeSet.SetScore(CalculateResult());
         _PracticeSet.MoveToShowResult();
+        SetApproachRate();
         PhotonChangeFallenAreaColor(false);
 
     }
@@ -704,7 +702,7 @@ public class BlackJackManager : MonoBehaviour
         //    * (10 - Mathf.Min(_PracticeSet.MyApproachedTime[nowTrial], _PracticeSet.YourApproachedTime[nowTrial]))
         //    * (10 - (_PracticeSet.MyApproachedTime[nowTrial] < _PracticeSet.YourApproachedTime[nowTrial] ? _PracticeSet.YourSelectedTime[nowTrial] : _PracticeSet.MySelectedTime[nowTrial]));
         return _succeed == 1 ?
-                 100 * (Mathf.Min(Mydistance / LeftAmountOfMove, Yourdistance / RightAmountOfMove) / (_PracticeSet.MySelectedTime[nowTrial] + _PracticeSet.YourSelectedTime[nowTrial]))
+                 MathF.Min(100, 100 * (Mathf.Min(Mydistance / LeftAmountOfMove, Yourdistance / RightAmountOfMove) / (_PracticeSet.MySelectedTime[nowTrial] + _PracticeSet.YourSelectedTime[nowTrial])))
             : 0;
         /*return _succeed == 1 ? Mathf.Min(
                  100 * Mathf.Min(Mydistance - LeftAmountOfMove * 1.5f * 0.1f, Yourdistance - RightAmountOfMove * 1.5f * 0.1f) / (_PracticeSet.MySelectedTime[nowTrial] * LeftAmountOfMove + _PracticeSet.YourSelectedTime[nowTrial] * RightAmountOfMove),
@@ -745,44 +743,6 @@ public class BlackJackManager : MonoBehaviour
     public void PhotonMakeReadyClient()
     {
         _PracticeSet.MakeReadyClient();
-    }
-    private string CalculateScorewithSuit()
-    {
-        string result = Score.ToString();
-        if (_cardslist.MyCardsList[_PracticeSet.MySelectedCard].suit.GetColor() == _cardslist.YourCardsList[_PracticeSet.YourSelectedCard].suit.GetColor())
-        {
-            if (_cardslist.MyCardsList[_PracticeSet.MySelectedCard].suit == _cardslist.YourCardsList[_PracticeSet.YourSelectedCard].suit)
-            {
-                result += " x 1.2 = " + Mathf.Ceil(Score * 1.2f).ToString();
-            }
-            else
-            {
-                result += " x 1.1 = " + Mathf.Ceil(Score * 1.1f).ToString();
-            }
-        }
-        else
-        {
-            result += " x 1.0 = " + Score.ToString();
-        }
-        return result;
-    }
-    private int CalculateSuitScore()
-    {
-        if (_cardslist.MyCardsList[_PracticeSet.MySelectedCard].suit.GetColor() == _cardslist.YourCardsList[_PracticeSet.YourSelectedCard].suit.GetColor())
-        {
-            if (_cardslist.MyCardsList[_PracticeSet.MySelectedCard].suit == _cardslist.YourCardsList[_PracticeSet.YourSelectedCard].suit)
-            {
-                return (int)Mathf.Ceil(Score * 1.2f);
-            }
-            else
-            {
-                return (int)Mathf.Ceil(Score * 1.1f);
-            }
-        }
-        else
-        {
-            return Score;
-        }
     }
     private void RecordMaxScore()
     {

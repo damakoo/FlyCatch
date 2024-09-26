@@ -81,6 +81,8 @@ MonoBehaviour:
   - UpdateYourApproachedRateOnAllClients
   - RPCChangeFallenAreaColor
   - RPCChangeFallenAreaPos
+  - UpdatefloatScoreOnAllClients
+  - UpdateScoreOnAllClients
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

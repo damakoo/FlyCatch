@@ -23,6 +23,29 @@ public class PracticeSet : MonoBehaviourPunCallbacks
     public float TimeLeft { get; set; } = 0;
     public bool HostPressed { get; set; } = false;
     public bool ClientPressed { get; set; } = false;
+    public float floatScore { get; set; } = 0;
+    public int Score { get; set; } = 0;
+    public void SetScore(int _Score)
+    {
+        Score = _Score;
+        _PhotonView.RPC("UpdateScoreOnAllClients", RpcTarget.Others, _Score);
+    }
+    [PunRPC]
+    void UpdateScoreOnAllClients(int _Score)
+    {
+        Score = _Score;
+    }
+    public void SetfloatScore(float _floatScore)
+    {
+        floatScore = _floatScore;
+        _PhotonView.RPC("UpdatefloatScoreOnAllClients", RpcTarget.Others, _floatScore);
+    }
+    [PunRPC]
+    void UpdatefloatScoreOnAllClients(float _floatScore)
+    {
+        floatScore = _floatScore;
+    }
+
     public void SetMyApproachRate(float _myapproachRate, int trial)
     {
         MyApproachedRate[trial] = _myapproachRate;
