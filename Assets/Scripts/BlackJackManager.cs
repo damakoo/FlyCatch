@@ -169,6 +169,9 @@ public class BlackJackManager : MonoBehaviour
                 {
                     nowTime += Time.deltaTime;
                     _PracticeSet.SetTimeLeft(TimeLimit - nowTime);
+                    FallenArea.transform.position = ReturnFallenArea(new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][9], _PracticeSet.FieldCardsPracticeList[nowTrial][10], _PracticeSet.FieldCardsPracticeList[nowTrial][11]), new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][0], _PracticeSet.FieldCardsPracticeList[nowTrial][1], _PracticeSet.FieldCardsPracticeList[nowTrial][2]), 0.5f + 0.5f * nowTime / FlyAffordTime);
+                    FallenArea.transform.localScale = new Vector3(3 + 7 * (1 - nowTime / FlyAffordTime), 0.01f, 3 + 7 * (1 - nowTime / FlyAffordTime));
+
                     if (nowTime > 0.15f) BlackJacking();
                     if (nowTime > _PracticeSet.FieldCardsPracticeList[nowTrial][12]) PhotonMoveToSelectBet();
                 }
@@ -214,6 +217,10 @@ public class BlackJackManager : MonoBehaviour
             else if (_hostorclient == HostorClient.Client && _PracticeSet.BlackJackState == PracticeSet.BlackJackStateList.SelectCards)
             {
                 nowTime += Time.deltaTime;
+                _PracticeSet.SetTimeLeft(TimeLimit - nowTime);
+                FallenArea.transform.position = ReturnFallenArea(new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][9], _PracticeSet.FieldCardsPracticeList[nowTrial][10], _PracticeSet.FieldCardsPracticeList[nowTrial][11]), new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][0], _PracticeSet.FieldCardsPracticeList[nowTrial][1], _PracticeSet.FieldCardsPracticeList[nowTrial][2]), 0.5f + 0.5f * nowTime / FlyAffordTime);
+                FallenArea.transform.localScale = new Vector3(3 + 7 * (1 - nowTime / FlyAffordTime), 0.01f, 3 + 7 * (1 - nowTime / FlyAffordTime));
+
                 if (nowTime > 0.15f) BlackJacking();
             }
             else if (_hostorclient == HostorClient.Client && _PracticeSet.BlackJackState == PracticeSet.BlackJackStateList.SelectBet)
@@ -285,7 +292,7 @@ public class BlackJackManager : MonoBehaviour
         if (changeRed)
         {
             // 現在が赤なら透明に変更
-            FallenAreaMaterial.color = new Color(0f, 0f, 0f, 0.8f); 
+            FallenAreaMaterial.color = new Color(0f, 0f, 0f, 0.5f); 
         }
         else
         {
@@ -353,7 +360,8 @@ public class BlackJackManager : MonoBehaviour
         ClientPlayer.transform.rotation = _PracticeSet.ClientPlayerRot;
         HostPlayerAnimator.SetBool("Running", _PracticeSet.HostPlayerRunning);
         ClientPlayerAnimator.SetBool("Running", _PracticeSet.ClientPlayerRunning);
-    }
+
+        }
     private void SetPlayerHostFallpoint()
     {
         if (_PracticeSet.BlackJackState == PracticeSet.BlackJackStateList.SelectCards)
@@ -640,6 +648,12 @@ public class BlackJackManager : MonoBehaviour
         _PracticeSet.SetClientPlayerRot(_defaultQuaternionClient);
         _PracticeSet.SetCharacterPos();
         PhotonChangeFallenAreaPos(_PracticeSet.FieldCardsPracticeList[nowTrial][9], _PracticeSet.FieldCardsPracticeList[nowTrial][10], _PracticeSet.FieldCardsPracticeList[nowTrial][11]);
+    }
+    private Vector3 ReturnFallenArea(Vector3 _fallenpos, Vector3 _launchpos, float _rate)
+    {
+        Vector3 _pos = _launchpos + (_fallenpos - _launchpos) * _rate;
+        return new Vector3(_pos.x, 0, _pos.z);
+
     }
     public void PhotonMoveToShowResult()
     {
