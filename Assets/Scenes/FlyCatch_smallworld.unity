@@ -6020,7 +6020,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   csvFileName: difficulty.csv
-  standarddeviation: 0.3
+  standarddeviation: 0.2
   _blackJackManager: {fileID: 2081172670}
 --- !u!1 &1793300944
 GameObject:
@@ -6892,7 +6892,7 @@ MonoBehaviour:
   ResultsTime: 6
   WaitingTime: 4
   BetTime: 0
-  NumberofSet: 5
+  NumberofSet: 10
   FinishUI: {fileID: 1063908797}
   _blackJackRecorder: {fileID: 482464996}
   MyScoreUI: {fileID: 1518576809}
