@@ -169,8 +169,8 @@ public class BlackJackManager : MonoBehaviour
                 {
                     nowTime += Time.deltaTime;
                     _PracticeSet.SetTimeLeft(TimeLimit - nowTime);
-                    FallenArea.transform.position = ReturnFallenArea(new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][9], _PracticeSet.FieldCardsPracticeList[nowTrial][10], _PracticeSet.FieldCardsPracticeList[nowTrial][11]), new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][0], _PracticeSet.FieldCardsPracticeList[nowTrial][1], _PracticeSet.FieldCardsPracticeList[nowTrial][2]), 0.5f + 0.5f * nowTime / FlyAffordTime);
-                    FallenArea.transform.localScale = new Vector3(3 + 7 * (1 - nowTime / FlyAffordTime), 0.01f, 3 + 7 * (1 - nowTime / FlyAffordTime));
+                    //FallenArea.transform.position = ReturnFallenArea(new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][9], _PracticeSet.FieldCardsPracticeList[nowTrial][10], _PracticeSet.FieldCardsPracticeList[nowTrial][11]), new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][0], _PracticeSet.FieldCardsPracticeList[nowTrial][1], _PracticeSet.FieldCardsPracticeList[nowTrial][2]), 0.5f + 0.5f * nowTime / FlyAffordTime);
+                   // FallenArea.transform.localScale = new Vector3(3 + 7 * (1 - nowTime / FlyAffordTime), 0.01f, 3 + 7 * (1 - nowTime / FlyAffordTime));
 
                     if (nowTime > 0.15f) BlackJacking();
                     if (nowTime > _PracticeSet.FieldCardsPracticeList[nowTrial][12]) PhotonMoveToSelectBet();
@@ -218,8 +218,8 @@ public class BlackJackManager : MonoBehaviour
             {
                 nowTime += Time.deltaTime;
                 _PracticeSet.SetTimeLeft(TimeLimit - nowTime);
-                FallenArea.transform.position = ReturnFallenArea(new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][9], _PracticeSet.FieldCardsPracticeList[nowTrial][10], _PracticeSet.FieldCardsPracticeList[nowTrial][11]), new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][0], _PracticeSet.FieldCardsPracticeList[nowTrial][1], _PracticeSet.FieldCardsPracticeList[nowTrial][2]), 0.5f + 0.5f * nowTime / FlyAffordTime);
-                FallenArea.transform.localScale = new Vector3(3 + 7 * (1 - nowTime / FlyAffordTime), 0.01f, 3 + 7 * (1 - nowTime / FlyAffordTime));
+                //FallenArea.transform.position = ReturnFallenArea(new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][9], _PracticeSet.FieldCardsPracticeList[nowTrial][10], _PracticeSet.FieldCardsPracticeList[nowTrial][11]), new Vector3(_PracticeSet.FieldCardsPracticeList[nowTrial][0], _PracticeSet.FieldCardsPracticeList[nowTrial][1], _PracticeSet.FieldCardsPracticeList[nowTrial][2]), 0.5f + 0.5f * nowTime / FlyAffordTime);
+                //FallenArea.transform.localScale = new Vector3(3 + 7 * (1 - nowTime / FlyAffordTime), 0.01f, 3 + 7 * (1 - nowTime / FlyAffordTime));
 
                 if (nowTime > 0.15f) BlackJacking();
             }
