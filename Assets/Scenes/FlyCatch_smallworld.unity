@@ -5975,6 +5975,53 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 25, y: 180, z: 0}
+--- !u!1 &1777786072
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1777786073}
+  - component: {fileID: 1777786074}
+  m_Layer: 0
+  m_Name: GenerateInitialParameter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1777786073
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1777786072}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.5950823, y: -6.6629305, z: -12.268171}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1777786074
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1777786072}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bcf3e7cf56b83bd4aa952948bb2ea6f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  csvFileName: difficulty.csv
+  standarddeviation: 0.3
+  _blackJackManager: {fileID: 2081172670}
 --- !u!1 &1793300944
 GameObject:
   m_ObjectHideFlags: 0
@@ -6858,14 +6905,6 @@ MonoBehaviour:
   WaitforStartUi: {fileID: 1566162603}
   _SceneReloaderHost: {fileID: 1646070324}
   _SceneReloaderClient: {fileID: 1009520425}
-  BetUiChild:
-  - {fileID: 1286396678}
-  - {fileID: 1239416024}
-  - {fileID: 1664234082}
-  - {fileID: 1979542551}
-  - {fileID: 989323305}
-  - {fileID: 1278004589}
-  - {fileID: 609632748}
   TimeLimitObj: {fileID: 1815379494}
   TimeLimit_Bet: {fileID: 1793300944}
   TimeLimit_notBet: {fileID: 2093124114}
@@ -6878,9 +6917,10 @@ MonoBehaviour:
   ClientPlayer: {fileID: 216892841}
   RightAmountOfMove: 6.72
   LeftAmountOfMove: 5.6
-  FlyAffordTime: 1.8
+  FlyAffordTime: 1.5
   RightDelayTime: 0
   LeftDelayTime: 0
+  _GenerateInitialParameter: {fileID: 1777786074}
   _HowShowCard: 1
 --- !u!114 &2081172671
 MonoBehaviour:
@@ -7188,3 +7228,4 @@ SceneRoots:
   - {fileID: 1544282918}
   - {fileID: 1426689413}
   - {fileID: 1346077622}
+  - {fileID: 1777786073}

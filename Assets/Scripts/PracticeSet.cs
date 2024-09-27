@@ -4,6 +4,7 @@ using Photon.Pun;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System;
+using System.Collections;
 
 
 public class PracticeSet : MonoBehaviourPunCallbacks
@@ -497,11 +498,29 @@ public class PracticeSet : MonoBehaviourPunCallbacks
     public void UpdateParameter()
     {
         List<int> _order = GenerateRandomList(1, CardPattern.FieldCardPattern.Count);
+        StartCoroutine(WaitForBlackJackManager());
+    }
+    // コルーチンを使用して条件が満たされるまで待機する関数
+    private IEnumerator WaitForBlackJackManager()
+    {
+        // _BlackJackManagerがnull、またはissetfallenpointsがfalseの間は待機
+        while (_BlackJackManager == null || !_BlackJackManager.issetfallenpoints)
+        {
+            yield return null; // 1フレーム待機
+        }
+
+        // 条件が満たされたら処理を実行
+        ExecuteCardHandling();
+    }
+
+    // 実際の処理部分を関数に分離
+    private void ExecuteCardHandling()
+    {
         for (int i = 0; i < NumberofSet; i++)
         {
             //DecidingCards(Random.Range(0, NumberofCards));
             //DecidingCards(RandomValue());
-            DecideDecidedCards(_order[i] - 1);
+            DecideDecidedCards(i);
             FieldCardsPracticeList.Add(FieldCards);
             MyCardsPracticeList.Add(MyCards);
             YourCardsPracticeList.Add(YourCards);
@@ -522,7 +541,8 @@ public class PracticeSet : MonoBehaviourPunCallbacks
         {
             //DecidingCards(Random.Range(0, NumberofCards));
             //DecidingCards(RandomValue());
-            DecideDecidedCards(_order[i] - 1);
+            _BlackJackManager.setfallenpoints();
+            DecideDecidedCards(i);
             FieldCardsPracticeList.Add(FieldCards);
             MyCardsPracticeList.Add(MyCards);
             YourCardsPracticeList.Add(YourCards);
@@ -570,7 +590,8 @@ public class PracticeSet : MonoBehaviourPunCallbacks
         //YourCards = new List<float>() { UnityEngine.Random.Range(-25f, -15f), 0, UnityEngine.Random.Range(10f, 20f) };
         MyCards = new List<float>() { 3.05f, 0, -3.35f };
         YourCards = new List<float>() { -3.05f, 0, 3.35f };
-        Vector3 fallpoint = new Vector3(UnityEngine.Random.Range(-3.05f, 3.05f), 0f, UnityEngine.Random.Range(-3.35f, 3.35f));
+        //Vector3 fallpoint = new Vector3(UnityEngine.Random.Range(-3.05f, 3.05f), 0f, UnityEngine.Random.Range(-3.35f, 3.35f));
+        Vector3 fallpoint = _BlackJackManager.fallenpoints[_order];
         Vector3 launchpoint = new Vector3(UnityEngine.Random.Range(-3.05f, 3.05f), UnityEngine.Random.Range(2.0f, 2.5f), UnityEngine.Random.Range(-9.75f, -7.05f));
         float Mydistance = Vector3.Magnitude(fallpoint - new Vector3(MyCards[0], MyCards[1], MyCards[2]));
         float Yourdistance = Vector3.Magnitude(fallpoint - new Vector3(YourCards[0], YourCards[1], YourCards[2]));
