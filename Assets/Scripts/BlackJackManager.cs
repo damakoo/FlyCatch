@@ -517,7 +517,7 @@ public class BlackJackManager : MonoBehaviour
         if (_PracticeSet.Score == 1) Ball_mesh.enabled = false;
         //_blackJackRecorder.RecordResult((_PracticeSet.MySelectedCard == NOTSELCETEDNUMBER) ? 0 : _cardslist.MyCardsList[_PracticeSet.MySelectedCard].Number, (_PracticeSet.YourSelectedCard == NOTSELCETEDNUMBER) ? 0 : _cardslist.YourCardsList[_PracticeSet.YourSelectedCard].Number, (useSuit) ? CalculateSuitScore() : Score, _PracticeSet.MySelectedBet, _PracticeSet.YourSelectedBet);
         _PracticeSet.BlackJackState = PracticeSet.BlackJackStateList.ShowResult;
-        MyScoreUI.text = (_PracticeSet.Score == 1 ? "Succeed!" : "Failed!") + "Score:" + (_PracticeSet.floatScore * 1).ToString("F1");
+        MyScoreUI.text = (_PracticeSet.Score == 1 ? "Succeed!" : "Failed!") + "Score:" + (MathF.Round(_PracticeSet.floatScore/10)*10).ToString("F1");
         //    + "\n Left Pressed:" + _PracticeSet.MySelectedTime[nowTrial].ToString("F1") + "s," + "Approached:" + (_PracticeSet.MyApproachedTime[nowTrial] < 90 ? _PracticeSet.MyApproachedTime[nowTrial].ToString("F1") : "NaN") + "s"
         //    + "\n Right Pressed:" + _PracticeSet.YourSelectedTime[nowTrial].ToString("F1") + "s," + "Approached:" + (_PracticeSet.YourApproachedTime[nowTrial] < 90 ? _PracticeSet.YourApproachedTime[nowTrial].ToString("F1") : "NaN") + "s";
         ScoreList.Add(_PracticeSet.Score);

@@ -6020,7 +6020,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   csvFileName: difficulty.csv
-  standarddeviation: 0.2
+  standarddeviation: 0.15
   _blackJackManager: {fileID: 2081172670}
 --- !u!1 &1793300944
 GameObject:
