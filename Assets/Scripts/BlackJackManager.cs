@@ -26,6 +26,7 @@ public class BlackJackManager : MonoBehaviour
     [SerializeField] GameObject StartingUi_button;
     [SerializeField] GameObject WaitforStartUi;
     [SerializeField] GameObject _SceneReloaderHost;
+    TextMeshProUGUI _SceneReloaderHosttext;
     [SerializeField] GameObject _SceneReloaderClient;
     [SerializeField] GameObject TimeLimitObj;
     [SerializeField] GameObject TimeLimit_Bet;
@@ -93,6 +94,7 @@ public class BlackJackManager : MonoBehaviour
         _defaultQuaternionHost = HostPlayer.transform.localRotation;
         _defaultQuaternionClient = ClientPlayer.transform.localRotation;
         FallenAreaMaterial = FallenArea.GetComponent<Renderer>().material;
+        _SceneReloaderHosttext = _SceneReloaderHost.GetComponent<TextMeshProUGUI>();
     }
     private void FixedUpdate()
     {
@@ -535,6 +537,7 @@ public class BlackJackManager : MonoBehaviour
             }
             else
             {
+                _SceneReloaderHosttext.text = "Finished!! Trial:" + _blackJackRecorder.Trial.ToString() + "/" + NumberofSet.ToString() + "\n" + "Press Space to Restart";
                 _SceneReloaderHost.SetActive(true);
             }
 
