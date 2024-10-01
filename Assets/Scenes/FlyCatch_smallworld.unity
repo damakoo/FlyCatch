@@ -6919,7 +6919,7 @@ MonoBehaviour:
   ClientPlayer: {fileID: 216892841}
   RightAmountOfMove: 6.72
   LeftAmountOfMove: 5.6
-  FlyAffordTime: 1.5
+  FlyAffordTime: 1.6
   RightDelayTime: 0
   LeftDelayTime: 0
   _GenerateInitialParameter: {fileID: 1777786074}
