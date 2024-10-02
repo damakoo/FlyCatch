@@ -586,7 +586,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5962506490023211491, guid: 99f7c8f093b0a53498977df82047195b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.05
+      value: -3.05
       objectReference: {fileID: 0}
     - target: {fileID: 5962506490023211491, guid: 99f7c8f093b0a53498977df82047195b, type: 3}
       propertyPath: m_LocalPosition.y
@@ -594,7 +594,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5962506490023211491, guid: 99f7c8f093b0a53498977df82047195b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -3.35
+      value: 3.35
       objectReference: {fileID: 0}
     - target: {fileID: 5962506490023211491, guid: 99f7c8f093b0a53498977df82047195b, type: 3}
       propertyPath: m_LocalRotation.w
@@ -636,6 +636,11 @@ PrefabInstance:
 --- !u!1 &216892841 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5962506490023308739, guid: 99f7c8f093b0a53498977df82047195b, type: 3}
+  m_PrefabInstance: {fileID: 216892840}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &216892844 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5962506490023211491, guid: 99f7c8f093b0a53498977df82047195b, type: 3}
   m_PrefabInstance: {fileID: 216892840}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &301742580
@@ -1087,6 +1092,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _BlackJackManager: {fileID: 2081172670}
   Trial: 1
+  HostRightApproachedRateAll: []
+  HostLeftApproachedRateAll: []
+  ClientRightApproachedRateAll: []
+  ClientLeftApproachedRateAll: []
+  FallenpointsAll: []
 --- !u!4 &482464997
 Transform:
   m_ObjectHideFlags: 0
@@ -3304,7 +3314,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5962506490023211491, guid: 99f7c8f093b0a53498977df82047195b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -3.05
+      value: 3.05
       objectReference: {fileID: 0}
     - target: {fileID: 5962506490023211491, guid: 99f7c8f093b0a53498977df82047195b, type: 3}
       propertyPath: m_LocalPosition.y
@@ -3312,7 +3322,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5962506490023211491, guid: 99f7c8f093b0a53498977df82047195b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 3.35
+      value: -3.35
       objectReference: {fileID: 0}
     - target: {fileID: 5962506490023211491, guid: 99f7c8f093b0a53498977df82047195b, type: 3}
       propertyPath: m_LocalRotation.w
@@ -3354,6 +3364,11 @@ PrefabInstance:
 --- !u!1 &1164048794 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5962506490023308739, guid: 99f7c8f093b0a53498977df82047195b, type: 3}
+  m_PrefabInstance: {fileID: 1164048793}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1164048797 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5962506490023211491, guid: 99f7c8f093b0a53498977df82047195b, type: 3}
   m_PrefabInstance: {fileID: 1164048793}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1239416020
@@ -5641,8 +5656,8 @@ GameObject:
   - component: {fileID: 1677115917}
   - component: {fileID: 1677115916}
   - component: {fileID: 1677115915}
-  - component: {fileID: 1677115914}
   - component: {fileID: 1677115918}
+  - component: {fileID: 1677115919}
   m_Layer: 0
   m_Name: heatmap
   m_TagString: Untagged
@@ -5650,28 +5665,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!64 &1677115914
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1677115913}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!23 &1677115915
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -5731,8 +5724,8 @@ Transform:
   m_GameObject: {fileID: 1677115913}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.002, z: 0.035}
-  m_LocalScale: {x: 0.7015, y: 1.0349998, z: 0.77049994}
+  m_LocalPosition: {x: 0, y: 0.002, z: 0}
+  m_LocalScale: {x: 0.61, y: 0.8999999, z: 0.66999996}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
@@ -5744,13 +5737,30 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1677115913}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 62c9bc0a4779c59488aecfc38ed4a617, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   textureFileName: heatmap.png
   transparency: 0.75
+--- !u!114 &1677115919
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1677115913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc682ad600375d94d8d82b83e768b65b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  power: 2
+  neighbors: 5
+  _generateInitialParameter: {fileID: 1777786074}
+  hostPlayer: {fileID: 1164048794}
+  clientPlayer: {fileID: 216892841}
 --- !u!1 &1684045082
 GameObject:
   m_ObjectHideFlags: 0
@@ -6024,6 +6034,9 @@ MonoBehaviour:
   csvFileName: difficulty.csv
   standarddeviation: 0.15
   _blackJackManager: {fileID: 2081172670}
+  HostTransform: {fileID: 1164048797}
+  ClientTransform: {fileID: 216892844}
+  gridResolution: 100
 --- !u!1 &1793300944
 GameObject:
   m_ObjectHideFlags: 0
@@ -6887,7 +6900,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d47b190b0d2245679d4ff878fb09be1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useSuit: 0
   _cardslist: {fileID: 2081172671}
   TimeLimit: 6
   ShowMyCardsTime: 0
@@ -6899,7 +6911,6 @@ MonoBehaviour:
   _blackJackRecorder: {fileID: 482464996}
   MyScoreUI: {fileID: 1518576809}
   ClientUi: {fileID: 802535947}
-  BetUi: {fileID: 1493849237}
   CardListObject: {fileID: 301742580}
   _decideHostorClient: {fileID: 1440004566}
   StartingUi: {fileID: 45096277}
@@ -6923,7 +6934,7 @@ MonoBehaviour:
   RightDelayTime: 0
   LeftDelayTime: 0
   _GenerateInitialParameter: {fileID: 1777786074}
-  _HowShowCard: 1
+  _makeheatmap: {fileID: 1677115919}
 --- !u!114 &2081172671
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -11,9 +11,12 @@ public class GenerateInitialParameter : MonoBehaviour
     private List<DifficultyData> difficultyList = new List<DifficultyData>();
     [SerializeField] float standarddeviation = 0.5f;
     [SerializeField] BlackJackManager _blackJackManager;
-    
+    [SerializeField] Transform HostTransform;
+    [SerializeField] Transform ClientTransform;
+    public int gridResolution = 100;
 
-    void Awake()
+
+    /*void Awake()
     {
         // StreamingAssetsフォルダ内のCSVファイルのURLを取得
         csvUrl = Path.Combine(Application.streamingAssetsPath, csvFileName);
@@ -21,6 +24,11 @@ public class GenerateInitialParameter : MonoBehaviour
         // CSVファイルが存在するか非同期で確認
         StartCoroutine(CheckAndLoadCSV());
 
+    }*/
+    private void Start()
+    {
+        CalculateDifficultyGrid();
+        setfallenpoints();
     }
 
     public void setfallenpoints()
@@ -75,9 +83,62 @@ public class GenerateInitialParameter : MonoBehaviour
             }
         }
     }
+    void CalculateDifficultyGrid()
+    {
+        // グリッドを初期化
+        float[] gridX = GenerateGrid(HostTransform.position.x, ClientTransform.position.x, gridResolution);
+        float[] gridY = GenerateGrid(HostTransform.position.z, ClientTransform.position.z, gridResolution);
 
-    // CSVデータを解析するメソッド
-    void ParseCSV(string csvData)
+        float minDifficulty = float.MaxValue;
+        float maxDifficulty = float.MinValue;
+
+
+        Vector2 Host2dPos = new Vector2(HostTransform.position.x, HostTransform.position.z);
+        Vector2 Client2dPos = new Vector2(ClientTransform.position.x, ClientTransform.position.z);
+        // グリッド上の各点に対して計算
+        for (int i = 0; i < gridX.Length; i++)
+        {
+            for (int j = 0; j < gridY.Length; j++)
+            {
+                Vector2 point = new Vector2(gridX[i], gridY[j]);
+
+                // A君とB君の到達時間の計算
+                float aTime = Vector2.Distance(point, Host2dPos) / _blackJackManager.LeftAmountOfMove;
+                float bTime = Vector2.Distance(point, Client2dPos) / _blackJackManager.RightAmountOfMove;
+
+                // 到達時間の差分を計算
+                float difficulty = Mathf.Abs(aTime - bTime);
+
+                // データをリストに格納
+                difficultyList.Add(new DifficultyData(point.x, point.y, difficulty));
+
+                // 最小値と最大値をトラック
+                if (difficulty < minDifficulty) minDifficulty = difficulty;
+                if (difficulty > maxDifficulty) maxDifficulty = difficulty;
+            }
+        }
+
+        // 正規化（min-maxスケーリング）
+        for (int i = 0; i < difficultyList.Count; i++)
+        {
+            DifficultyData data = difficultyList[i];
+            float normalizedDifficulty = 1 - (data.difficulty - minDifficulty) / (maxDifficulty - minDifficulty);
+            difficultyList[i] = new DifficultyData(data.x, data.y, normalizedDifficulty);
+        }
+    }
+
+    float[] GenerateGrid(float start, float end, int resolution)
+    {
+        float[] grid = new float[resolution];
+        float step = (end - start) / (resolution - 1);
+        for (int i = 0; i < resolution; i++)
+        {
+            grid[i] = start + i * step;
+        }
+        return grid;
+    }
+// CSVデータを解析するメソッド
+void ParseCSV(string csvData)
     {
         StringReader reader = new StringReader(csvData);
         bool isHeader = true;

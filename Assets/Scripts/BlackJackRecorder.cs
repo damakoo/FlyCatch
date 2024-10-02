@@ -28,6 +28,12 @@ public class BlackJackRecorder : MonoBehaviour
     private List<float> YourApproachedTime => _PracticeSet.YourApproachedTime;
     public int Trial = 1;
 
+    public List<float> HostRightApproachedRateAll = new List<float>();
+    public List<float> HostLeftApproachedRateAll = new List<float>();
+    public List<float> ClientRightApproachedRateAll = new List<float>();
+    public List<float> ClientLeftApproachedRateAll = new List<float>();
+    public List<Vector3> FallenpointsAll = new List<Vector3>();
+
 
     private string _Title;
     private void Start()
@@ -53,6 +59,17 @@ public class BlackJackRecorder : MonoBehaviour
     public void ExportCsv()
     {
         DownloadFile("result_flycatch_" + _Title + "_" + Trial.ToString() + ".csv", WriteContent());
+    }
+    public void RecordResultAll()
+    {
+        for (int i = 0; i < TrialAll; i++)
+        {
+            HostRightApproachedRateAll.Add(_PracticeSet.YourApproachedRate[i]);
+            HostLeftApproachedRateAll.Add(_PracticeSet.MyApproachedRate[i]);
+            ClientRightApproachedRateAll.Add(_PracticeSet.YourApproachedRate[i]);
+            ClientRightApproachedRateAll.Add(_PracticeSet.MyApproachedRate[i]);
+            FallenpointsAll.Add(new Vector3(FieldCardsPracticeList[i][9], FieldCardsPracticeList[i][10], FieldCardsPracticeList[i][11]));
+        }
     }
 
     /*public void WriteResult()

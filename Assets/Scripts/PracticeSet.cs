@@ -403,45 +403,36 @@ public class PracticeSet : MonoBehaviourPunCallbacks
             this.data = data;
         }
     }
+    public enum ExperimentalPhaseList
+    {
+        Tutorial,
+        SoloPlay,
+        BaseLine,
+        Learning,
+        Test,
+    }
+    public ExperimentalPhaseList ExperimentalPhase = ExperimentalPhaseList.Tutorial;
 
-    public List<List<int>> MyCardsSuitPracticeList = new List<List<int>>();
-    public List<List<int>> YourCardsSuitPracticeList = new List<List<int>>();
-    public List<int> FieldCardsSuitPracticeList = new List<int>();
-    public void SetMyCardsSuitPracticeList(List<List<int>> _MyCardsSuitPracticeList)
+    public void SetExperimentalPhase(ExperimentalPhaseList _ExperimentalPhase)
     {
-        //List<List<int>> temp = _MyCardsSuitPracticeList;
-        //MyCardsSuitPracticeList = temp;
-        //_PhotonView.RPC("UpdateMyCardsSuitPracticeListOnAllClients", RpcTarget.Others, SerializeCardList(_MyCardsSuitPracticeList));
+        ExperimentalPhase = _ExperimentalPhase;
+        _PhotonView.RPC("UpdateExperimentalPhaseListOnAllClients", RpcTarget.Others, SerializeExperimentalPhase(_ExperimentalPhase));
     }
     [PunRPC]
-    void UpdateMyCardsSuitPracticeListOnAllClients(string serializeCards)
+    void UpdateExperimentalPhaseListOnAllClients(string serializeCards)
     {
         // ここでカードデータを再構築
-        //MyCardsSuitPracticeList = DeserializeCardList(serializeCards);
+        ExperimentalPhase = DeserializeExperimentalPhase(serializeCards);
     }
-    public void SetYourCardsSuitPracticeList(List<List<int>> _YourCardsSuitPracticeList)
+
+    private string SerializeExperimentalPhase(ExperimentalPhaseList _ExperimentalPhase)
     {
-        //List<List<int>> temp = _YourCardsSuitPracticeList;
-        //YourCardsSuitPracticeList = temp;
-        //_PhotonView.RPC("UpdateYourCardsSuitPracticeListOnAllClients", RpcTarget.Others, SerializeCardList(_YourCardsSuitPracticeList));
+        return JsonUtility.ToJson(new SerializationWrapper<ExperimentalPhaseList>(_ExperimentalPhase));
     }
-    [PunRPC]
-    void UpdateYourCardsSuitPracticeListOnAllClients(string serializeCards)
+
+    private ExperimentalPhaseList DeserializeExperimentalPhase(string serializedCards)
     {
-        // ここでカードデータを再構築
-        //YourCardsSuitPracticeList = DeserializeCardList(serializeCards);
-    }
-    public void SetFieldCardsSuitList(List<int> _FieldCardsSuitPracticeList)
-    {
-        //List<int> temp = FieldCardsSuitPracticeList;
-        //FieldCardsSuitPracticeList = temp;
-        //_PhotonView.RPC("UpdateFieldCardsSuitPracticeListOnAllClients", RpcTarget.Others, SerializeFieldCard(_FieldCardsSuitPracticeList));
-    }
-    [PunRPC]
-    void UpdateFieldCardsSuitPracticeListOnAllClients(string serializeCards)
-    {
-        // ここでカードデータを再構築
-        // FieldCardsSuitPracticeList = DeserializeFieldCard(serializeCards);
+        return JsonUtility.FromJson<SerializationWrapper<ExperimentalPhaseList>>(serializedCards).data;
     }
 
     public enum BlackJackStateList
@@ -454,6 +445,7 @@ public class PracticeSet : MonoBehaviourPunCallbacks
         ShowResult,
         Finished,
     }
+    
     public BlackJackStateList BlackJackState = BlackJackStateList.BeforeStart;
 
     public void SetBlackJackState(BlackJackStateList _BlackJackState)
@@ -588,8 +580,8 @@ public class PracticeSet : MonoBehaviourPunCallbacks
     {
         //MyCards = new List<float>() { UnityEngine.Random.Range(15f, 25f), 0, UnityEngine.Random.Range(10f, 20f) };
         //YourCards = new List<float>() { UnityEngine.Random.Range(-25f, -15f), 0, UnityEngine.Random.Range(10f, 20f) };
-        MyCards = new List<float>() { 3.05f, 0, -3.35f };
-        YourCards = new List<float>() { -3.05f, 0, 3.35f };
+        MyCards = new List<float>() { _BlackJackManager.HostPlayer.transform.position.x, _BlackJackManager.HostPlayer.transform.position.y, _BlackJackManager.HostPlayer.transform.position.z };
+        YourCards = new List<float>() { _BlackJackManager.ClientPlayer.transform.position.x, _BlackJackManager.ClientPlayer.transform.position.y, _BlackJackManager.ClientPlayer.transform.position.z };
         //Vector3 fallpoint = new Vector3(UnityEngine.Random.Range(-3.05f, 3.05f), 0f, UnityEngine.Random.Range(-3.35f, 3.35f));
         Vector3 fallpoint = _BlackJackManager.fallenpoints[_order];
         Vector3 launchpoint = new Vector3(UnityEngine.Random.Range(-3.05f, 3.05f), UnityEngine.Random.Range(2.0f, 2.5f), UnityEngine.Random.Range(-9.75f, -7.05f));
@@ -726,147 +718,6 @@ public class PracticeSet : MonoBehaviourPunCallbacks
         return new List<float>() { currentPosition.x, currentPosition.y, currentPosition.z, landingtime };
     }
 
-    void DecidingCards(int _j)
-    {
-        DecideRandomCards();
-        while (CheckDoubleCard())
-        {
-            DecideRandomCards();
-        }
-    }
-
-    void DecideCards(int _j)
-    {
-        /*MyCards = new List<float>();
-        YourCards = new List<float>();
-        MyCardsSuit = new List<float>();
-        YourCardsSuit = new List<float>();
-        //FieldCards = UnityEngine.Random.Range(1, 14);
-        //FieldCardsSuit = UnityEngine.Random.Range(0, 4);
-        int _targetSum = 10;
-        if (_j > 0)
-        {
-            for (int i = 0; i < _j; i++)
-            {
-                int card = UnityEngine.Random.Range(1, 14);
-                while (ValidityCheck(_targetSum, card, MyCards))
-                {
-                    card = UnityEngine.Random.Range(1, 14);
-                }
-                MyCards.Add(card);
-                YourCards.Add(_targetSum - card);
-                MyCardsSuit.Add(UnityEngine.Random.Range(0, 4));
-                YourCardsSuit.Add(UnityEngine.Random.Range(0, 4));
-            }
-        }
-        if (_j < NumberofCards)
-        {
-            for (int i = 0; i < NumberofCards - _j; i++)
-            {
-                int mycard = UnityEngine.Random.Range(1, 14);
-                int yourcard = UnityEngine.Random.Range(1, 14);
-                while (ValidityCheck_remaining(_targetSum, mycard, yourcard, MyCards, YourCards))
-                {
-                    mycard = UnityEngine.Random.Range(1, 14);
-                    yourcard = UnityEngine.Random.Range(1, 14);
-                }
-                MyCards.Add(mycard);
-                YourCards.Add(yourcard);
-                MyCardsSuit.Add(UnityEngine.Random.Range(0, 4));
-                YourCardsSuit.Add(UnityEngine.Random.Range(0, 4));
-            }
-        }
-        ShuffleCards();*/
-    }
-    void DecideRandomCards()
-    {
-        /*MyCards = new List<int>();
-        YourCards = new List<int>();
-        MyCardsSuit = new List<int>();
-        YourCardsSuit = new List<int>();
-       // FieldCards = UnityEngine.Random.Range(1, 14);
-        //FieldCards = 6;
-        FieldCardsSuit = UnityEngine.Random.Range(0, 4);
-        for (int i = 0; i < 5; i++)
-        {
-            MyCards.Add(UnityEngine.Random.Range(1, 14));
-            YourCards.Add(UnityEngine.Random.Range(1, 14));
-            //MyCards.Add(i + 6);
-            //YourCards.Add(i + 5);
-            MyCardsSuit.Add(UnityEngine.Random.Range(0, 4));
-            YourCardsSuit.Add(UnityEngine.Random.Range(0, 4));
-        }
-        ShuffleCards();*/
-    }
-    private bool CheckDoubleCard()
-    {
-        /*var combinedList = new List<(int, int)>();
-
-        // MyCards と MyCardsSuit の組み合わせを追加
-        for (int i = 0; i < MyCards.Count; i++)
-        {
-            combinedList.Add((MyCards[i], MyCardsSuit[i]));
-        }
-
-        // YourCards と YourCardsSuit の組み合わせを追加
-        for (int i = 0; i < YourCards.Count; i++)
-        {
-            combinedList.Add((YourCards[i], YourCardsSuit[i]));
-        }
-
-        // FieldCards と FieldCardsSuit の組み合わせを追加
-        //combinedList.Add((FieldCards, FieldCardsSuit));
-
-        // 重複があるかチェック
-        return combinedList.GroupBy(x => x).Any(g => g.Count() > 1);*/
-        return true;
-    }
-    bool CheckmorethanfourCards()
-    {
-        bool Result = false;
-        for (int k = 1; k < 14; k++)
-        {
-            int number = 0;
-            //if (FieldCards == k) number++;
-            foreach (var i in MyCards) if (i == k) number++;
-            foreach (var i in YourCards) if (i == k) number++;
-            if (number > 4) Result = true;
-        }
-        return Result;
-    }
-    bool ValidityCheck(int _targetSum, int card, List<int> _MyCard)
-    {
-        bool Result = false;
-        if (_targetSum <= card) Result = true;
-        if (_targetSum - card > 13) Result = true;
-        foreach (var eachcard in _MyCard) if (eachcard == card) Result = true;
-        return Result;
-    }
-    bool ValidityCheck_remaining(int _targetSum, int mycard, int yourcard, List<int> _MyCard, List<int> _YourCard)
-    {
-        bool Result = false;
-        if (mycard + yourcard == _targetSum) Result = true;
-        //foreach (var eachcard in _MyCard) if (eachcard == mycard) Result = true;
-        foreach (var eachcard in _MyCard) if (yourcard + eachcard == _targetSum) Result = true;
-        return Result;
-    }
-    void ShuffleCards()
-    {
-        for (int i = 0; i < MyCards.Count; i++)
-        {
-            int randomIndex = UnityEngine.Random.Range(i, MyCards.Count);
-            float temp = MyCards[i];
-            MyCards[i] = MyCards[randomIndex];
-            MyCards[randomIndex] = temp;
-        }
-        for (int i = 0; i < YourCards.Count; i++)
-        {
-            int randomIndex = UnityEngine.Random.Range(i, YourCards.Count);
-            float temp = YourCards[i];
-            YourCards[i] = YourCards[randomIndex];
-            YourCards[randomIndex] = temp;
-        }
-    }
 
     public void MoveToWaitForNextTrial(int _nowTrial)
     {
